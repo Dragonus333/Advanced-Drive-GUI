@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Advanced Drive GUI", "Advanced Drive GUI\Advanced Drive GUI.csproj", "{1E3C21B4-5620-487D-8F62-4708F1411EEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1E3C21B4-5620-487D-8F62-4708F1411EEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E3C21B4-5620-487D-8F62-4708F1411EEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E3C21B4-5620-487D-8F62-4708F1411EEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E3C21B4-5620-487D-8F62-4708F1411EEE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {89E8413D-C4B5-429E-846E-FD32F4C0A967}
+	EndGlobalSection
+EndGlobal
