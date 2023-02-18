@@ -1,6 +1,6 @@
 ﻿namespace Advanced_Drive_GUI
 {
-    partial class Form
+    partial class MainForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,11 +47,11 @@
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.customizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zoomInToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zoomOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.docsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -60,13 +60,13 @@
             this.blankSpaceToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.updateVersionToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.connectDriveButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.signInButton = new System.Windows.Forms.Button();
             this.logoPictureBox = new System.Windows.Forms.PictureBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.fileNameTextBox = new System.Windows.Forms.TextBox();
+            this.uploadButton = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).BeginInit();
@@ -79,7 +79,7 @@
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
-            this.toolsToolStripMenuItem,
+            this.viewToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -222,31 +222,31 @@
             this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(219, 34);
             this.selectAllToolStripMenuItem.Text = "Select &All";
             // 
-            // toolsToolStripMenuItem
+            // viewToolStripMenuItem
             // 
-            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.customizeToolStripMenuItem,
-            this.optionsToolStripMenuItem});
-            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(65, 29);
-            this.toolsToolStripMenuItem.Text = "Vie&w";
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.zoomInToolStripMenuItem,
+            this.zoomOutToolStripMenuItem});
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(65, 29);
+            this.viewToolStripMenuItem.Text = "Vie&w";
             // 
-            // customizeToolStripMenuItem
+            // zoomInToolStripMenuItem
             // 
-            this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(197, 34);
-            this.customizeToolStripMenuItem.Text = "Zoom &In";
+            this.zoomInToolStripMenuItem.Name = "zoomInToolStripMenuItem";
+            this.zoomInToolStripMenuItem.Size = new System.Drawing.Size(197, 34);
+            this.zoomInToolStripMenuItem.Text = "Zoom &In";
             // 
-            // optionsToolStripMenuItem
+            // zoomOutToolStripMenuItem
             // 
-            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(197, 34);
-            this.optionsToolStripMenuItem.Text = "Zoom &Out";
+            this.zoomOutToolStripMenuItem.Name = "zoomOutToolStripMenuItem";
+            this.zoomOutToolStripMenuItem.Size = new System.Drawing.Size(197, 34);
+            this.zoomOutToolStripMenuItem.Text = "Zoom &Out";
             // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.indexToolStripMenuItem,
+            this.docsToolStripMenuItem,
             this.searchToolStripMenuItem,
             this.toolStripSeparator5,
             this.aboutToolStripMenuItem});
@@ -254,11 +254,11 @@
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(65, 29);
             this.helpToolStripMenuItem.Text = "&Help";
             // 
-            // indexToolStripMenuItem
+            // docsToolStripMenuItem
             // 
-            this.indexToolStripMenuItem.Name = "indexToolStripMenuItem";
-            this.indexToolStripMenuItem.Size = new System.Drawing.Size(176, 34);
-            this.indexToolStripMenuItem.Text = "&Docs";
+            this.docsToolStripMenuItem.Name = "docsToolStripMenuItem";
+            this.docsToolStripMenuItem.Size = new System.Drawing.Size(176, 34);
+            this.docsToolStripMenuItem.Text = "&Docs";
             // 
             // searchToolStripMenuItem
             // 
@@ -320,16 +320,17 @@
             this.connectDriveButton.TabIndex = 2;
             this.connectDriveButton.Text = "Connect Drive";
             this.connectDriveButton.UseVisualStyleBackColor = true;
-            this.connectDriveButton.Click += new System.EventHandler(this.connectDriveButton_Click);
+            this.connectDriveButton.Click += new System.EventHandler(this.ConnectDriveButton_Click);
             // 
-            // button1
+            // signInButton
             // 
-            this.button1.Location = new System.Drawing.Point(261, 47);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(227, 53);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Sign In As Developer";
-            this.button1.UseVisualStyleBackColor = true;
+            this.signInButton.Location = new System.Drawing.Point(261, 47);
+            this.signInButton.Name = "signInButton";
+            this.signInButton.Size = new System.Drawing.Size(227, 53);
+            this.signInButton.TabIndex = 3;
+            this.signInButton.Text = "Sign In As Developer";
+            this.signInButton.UseVisualStyleBackColor = true;
+            this.signInButton.Click += new System.EventHandler(this.SignInOutButtonClicked);
             // 
             // logoPictureBox
             // 
@@ -375,41 +376,43 @@
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // fileNameTextBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(14, 106);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(227, 31);
-            this.textBox1.TabIndex = 6;
-            this.textBox1.Visible = false;
+            this.fileNameTextBox.Location = new System.Drawing.Point(14, 106);
+            this.fileNameTextBox.Name = "fileNameTextBox";
+            this.fileNameTextBox.ReadOnly = true;
+            this.fileNameTextBox.Size = new System.Drawing.Size(227, 31);
+            this.fileNameTextBox.TabIndex = 6;
+            this.fileNameTextBox.Visible = false;
             // 
-            // button2
+            // uploadButton
             // 
-            this.button2.Location = new System.Drawing.Point(508, 47);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(227, 53);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Upload Config File";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Visible = false;
+            this.uploadButton.Location = new System.Drawing.Point(508, 47);
+            this.uploadButton.Name = "uploadButton";
+            this.uploadButton.Size = new System.Drawing.Size(227, 53);
+            this.uploadButton.TabIndex = 7;
+            this.uploadButton.Text = "Upload Config File";
+            this.uploadButton.UseVisualStyleBackColor = true;
+            this.uploadButton.Visible = false;
             // 
-            // Form
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1215, 584);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.uploadButton);
+            this.Controls.Add(this.fileNameTextBox);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.logoPictureBox);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.signInButton);
             this.Controls.Add(this.connectDriveButton);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.menuStrip);
             this.MainMenuStrip = this.menuStrip;
-            this.Name = "Form";
+            this.Name = "MainForm";
             this.Text = "Advanced Drive GUI";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.statusStrip.ResumeLayout(false);
@@ -441,11 +444,11 @@
         private ToolStripMenuItem pasteToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator4;
         private ToolStripMenuItem selectAllToolStripMenuItem;
-        private ToolStripMenuItem toolsToolStripMenuItem;
-        private ToolStripMenuItem customizeToolStripMenuItem;
-        private ToolStripMenuItem optionsToolStripMenuItem;
+        private ToolStripMenuItem viewToolStripMenuItem;
+        private ToolStripMenuItem zoomInToolStripMenuItem;
+        private ToolStripMenuItem zoomOutToolStripMenuItem;
         private ToolStripMenuItem helpToolStripMenuItem;
-        private ToolStripMenuItem indexToolStripMenuItem;
+        private ToolStripMenuItem docsToolStripMenuItem;
         private ToolStripMenuItem searchToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator5;
         private ToolStripMenuItem aboutToolStripMenuItem;
@@ -454,12 +457,12 @@
         private ToolStripStatusLabel updateVersionToolStripStatusLabel;
         private ToolStripStatusLabel blankSpaceToolStripStatusLabel;
         private Button connectDriveButton;
-        private Button button1;
+        private Button signInButton;
         private PictureBox logoPictureBox;
         private TabControl tabControl1;
         private TabPage tabPage1;
         private TabPage tabPage2;
-        private TextBox textBox1;
-        private Button button2;
+        private TextBox fileNameTextBox;
+        private Button uploadButton;
     }
 }
