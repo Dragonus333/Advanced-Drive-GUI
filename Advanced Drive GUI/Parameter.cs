@@ -19,7 +19,7 @@
         public bool isUserParam { get; set; }
         public string? description { get; set; }
 
-        public float[]? values { get; set; }
+        public Object[]? values { get; set; }
 
         public TextBox[]? textBoxes { get; set; }
     }
