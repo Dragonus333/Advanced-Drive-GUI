@@ -67,6 +67,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.fileNameTextBox = new System.Windows.Forms.TextBox();
             this.uploadButton = new System.Windows.Forms.Button();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).BeginInit();
@@ -394,6 +395,12 @@
             this.uploadButton.Text = "Upload Config File";
             this.uploadButton.UseVisualStyleBackColor = true;
             this.uploadButton.Visible = false;
+            this.uploadButton.Click += new System.EventHandler(this.UploadZip);
+            // 
+            // openFileDialog
+            // 
+            this.openFileDialog.DefaultExt = "zip";
+            this.openFileDialog.Filter = "*.zip|";
             // 
             // MainForm
             // 
@@ -464,5 +471,6 @@
         private TabPage tabPage2;
         private TextBox fileNameTextBox;
         private Button uploadButton;
+        private OpenFileDialog openFileDialog;
     }
 }

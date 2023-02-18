@@ -1,3 +1,7 @@
+using Newtonsoft.Json;
+using System.IO.Compression;
+using System.Windows.Forms;
+
 namespace Advanced_Drive_GUI
 {
     internal static class Program
@@ -41,7 +45,7 @@ namespace Advanced_Drive_GUI
             Application.Run(mainForm); //Running the form
         }
 
-        public static void ShowPasswordPopUp()
+        public static void DoSignInProcess()
         {
             //If developer mode has already been unlocked
             if (DeveloperModeUnlocked)
@@ -125,6 +129,60 @@ namespace Advanced_Drive_GUI
             form.Controls.AddRange(new Control[] { label, textBox, buttonOk, buttonCancel }); //Add the controls
 
             return form;
+        }
+
+        /// <summary>
+        /// This method takes the zip file and converts all it's contents into c# objects.
+        /// </summary>
+        /// <param name="zipFilePath">The zip file to use</param>
+        public static void ReadConfigFiles(string zipFilePath)
+        {
+
+            using ZipArchive zip = ZipFile.Open(zipFilePath, ZipArchiveMode.Read); //Read the .zip file
+
+            List<ConfigFile> ConfigFiles = new(); //Start a list of config files
+
+            foreach (ZipArchiveEntry jsonFile in zip.Entries) //For each json file in there
+            {
+                string jsonText = new StreamReader(jsonFile.Open()).ReadToEnd(); //Get the text from the file
+
+                ConfigFile? configFile; //Create a config file object
+                try
+                {
+                    configFile = JsonConvert.DeserializeObject<ConfigFile>(jsonText); //Turn the json into a C# object called ConfigFile
+                }
+                catch (JsonSerializationException) //If there is a problem with the file
+                {
+                    MessageBox.Show("Please upload a .zip file with the correct files.", "Zip File Format Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
+                    return; //Exit
+                }
+                
+                if (configFile != null) //If the config file has been created correctly
+                {
+                    ConfigFiles.Add(configFile); //Add it to list
+
+                    if (configFile.FunctionBlock != null)
+                    {
+                        MessageBox.Show(configFile.FunctionBlock.name);
+                    }
+                    else if (configFile.BlockIds != null)
+                    {
+                        MessageBox.Show(configFile.BlockIds.ToString());
+                    }
+                    else
+                    {
+                        MessageBox.Show("???");
+                    }
+                }
+
+                ConvertConfigFilesToTabs(ConfigFiles); //Convert the files into user interface
+
+            }
+        }
+
+        private static void ConvertConfigFilesToTabs(List<ConfigFile> configFiles)
+        {
+            //throw new NotImplementedException();
         }
     }
 }
