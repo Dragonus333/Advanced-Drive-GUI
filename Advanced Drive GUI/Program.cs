@@ -141,6 +141,7 @@ namespace Advanced_Drive_GUI
             using ZipArchive zip = ZipFile.Open(zipFilePath, ZipArchiveMode.Read); //Read the .zip file
 
             List<ConfigFile> ConfigFiles = new(); //Start a list of config files
+            ConfigFile blockIDFile = new();
 
             foreach (ZipArchiveEntry jsonFile in zip.Entries) //For each json file in there
             {
@@ -159,15 +160,15 @@ namespace Advanced_Drive_GUI
                 
                 if (configFile != null) //If the config file has been created correctly
                 {
-                    ConfigFiles.Add(configFile); //Add it to list
-
                     if (configFile.FunctionBlock != null)
                     {
+                        ConfigFiles.Add(configFile); //Add it to list
                         MessageBox.Show(configFile.FunctionBlock.name);
                     }
                     else if (configFile.BlockIds != null)
                     {
-                        MessageBox.Show(configFile.BlockIds.ToString());
+                        blockIDFile = configFile;
+                        MessageBox.Show(configFile.BlockIds[0].instance);
                     }
                     else
                     {
@@ -175,6 +176,9 @@ namespace Advanced_Drive_GUI
                     }
                 }
 
+                //TODO: create instances of each config file using blockIDFile
+
+                //TODO: change the below to the instances of the config files
                 ConvertConfigFilesToTabs(ConfigFiles); //Convert the files into user interface
 
             }
