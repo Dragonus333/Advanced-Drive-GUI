@@ -19,7 +19,7 @@
         public bool isUserParam { get; set; }
         public string? description { get; set; }
 
-        public List<float> values { get; set; } = new List<float>();
+        public List<object> values { get; set; } = new List<object>();
 
         public List<TextBox> textBoxes { get; set; } = new List<TextBox>();
     }
