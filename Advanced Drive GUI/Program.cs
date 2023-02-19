@@ -141,7 +141,6 @@ namespace Advanced_Drive_GUI
             using ZipArchive zip = ZipFile.Open(zipFilePath, ZipArchiveMode.Read); //Read the .zip file
 
             List<ConfigFile> ConfigFiles = new(); //Start a list of config files
-            ConfigFile blockIDFile = new();
 
             foreach (ZipArchiveEntry jsonFile in zip.Entries) //For each json file in there
             {

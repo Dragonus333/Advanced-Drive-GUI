@@ -96,12 +96,9 @@ namespace Advanced_Drive_GUI
 
             tabControl.TabPages.Clear(); //Get rid of all existing tabs
 
-            foreach (FunctionBlock? functionBlock in configFiles.Select(c => c.FunctionBlock)) //For each function block 
+            FunctionBlock[] functionBlocks = configFiles.Select(c => c.FunctionBlock).OfType<FunctionBlock>().ToArray(); //Get function block array without nulls
+            foreach (FunctionBlock functionBlock in functionBlocks) //For each function block 
             {
-                if (functionBlock is null) //If it doesn't exist
-                {
-                    continue; //Skip
-                }
 
                 //Create tabPage
                 TabPage tabPage = new()
@@ -112,6 +109,7 @@ namespace Advanced_Drive_GUI
                         
                 };
                 tabControl.TabPages.Add(tabPage);//Add tabpage to tabpages
+                functionBlock.tabPage = tabPage; //Link function block and tabPage
                 //Create flowlayout for inside tabpage
                 FlowLayoutPanel tabPageflowLayoutPanel = new()
                 {
@@ -133,6 +131,8 @@ namespace Advanced_Drive_GUI
 
                     };
                     toolTips.SetToolTip(groupBox, block.id.ToString()); //Set tooltip to id
+
+                    functionBlock.highestContainedId = block.id; //Set the highest contained id (This will be the last one assigned)
 
                     //TODO update this everytime form is adjusted
                     int calcualtedMaxHeight = tabControl.Height - 75; //Get maximum height for groupbox
@@ -156,18 +156,21 @@ namespace Advanced_Drive_GUI
 
                 if (blocks.Count == 0) //If there are no blocks for it
                 {
+                    functionBlock.highestContainedId = 1000;//Set this high so it goes at the back
                     AddPanels(functionBlock.parameters, tabPageflowLayoutPanel); //Just add panels directly to tab
                 }
                 
             }
 
-            //TODO sort tabs based on block id
-            TabPage infoTab = tabControl.TabPages["Info"]; //Get info tab
-            tabControl.TabPages.Remove(infoTab); //Remove from exisiting position
-            tabControl.TabPages.Insert(0, infoTab); //Add to start
-
-            
-
+            // Arrange the tabs in the order of the highest contained id:
+            Array.Sort(functionBlocks); //Sort the functionBlocks according to their highest contained id
+            foreach (FunctionBlock functionBlock in functionBlocks.Reverse()) //For each function block, starting from the back
+            {
+                tabControl.TabPages.Remove(functionBlock.tabPage); //Remove from it's exisiting position
+                tabControl.TabPages.Insert(0, functionBlock.tabPage); //Add to the start
+            }
+            tabControl.SelectedIndex = 0;//Make user select the new first tab
+           
         }
 
         /// <summary>
