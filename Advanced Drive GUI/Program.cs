@@ -9,7 +9,7 @@ namespace Advanced_Drive_GUI
         /// <summary>
         /// The main form of the program
         /// </summary>
-        private static MainForm? mainForm;
+        private static readonly MainForm mainForm = new(); //Creating the main form
 
         /// <summary>
         /// A flag for if the devloper mode has been unlocked before whilst the program is running
@@ -33,6 +33,7 @@ namespace Advanced_Drive_GUI
             }
         }
 
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -41,7 +42,6 @@ namespace Advanced_Drive_GUI
         {
 
             ApplicationConfiguration.Initialize(); //Boiler Plate code
-            mainForm = new MainForm(); //Creating the main form
             Application.Run(mainForm); //Running the form
         }
 
@@ -151,7 +151,7 @@ namespace Advanced_Drive_GUI
                 {
                     configFile = JsonConvert.DeserializeObject<ConfigFile>(jsonText); //Turn the json into a C# object called ConfigFile
                 }
-                catch (JsonSerializationException) //If there is a problem with the file
+                catch (JsonException) //If there is a problem with the file
                 {
                     MessageBox.Show("Please upload a .zip file with the correct files.", "Zip File Format Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
                     return; //Exit
@@ -160,29 +160,30 @@ namespace Advanced_Drive_GUI
                 if (configFile != null) //If the config file has been created correctly
                 {
                     ConfigFiles.Add(configFile); //Add it to list
-
-                    if (configFile.FunctionBlock != null)
-                    {
-                        MessageBox.Show(configFile.FunctionBlock.name);
-                    }
-                    else if (configFile.BlockIds != null)
-                    {
-                        MessageBox.Show(configFile.BlockIds.ToString());
-                    }
-                    else
-                    {
-                        MessageBox.Show("???");
-                    }
                 }
 
-                ConvertConfigFilesToTabs(ConfigFiles); //Convert the files into user interface
-
             }
+
+            mainForm.ConvertConfigFilesToTabs(ConfigFiles); //Convert the files into user interface
         }
 
-        private static void ConvertConfigFilesToTabs(List<ConfigFile> configFiles)
+        /// <summary>
+        /// This function adds spaces before capital letters
+        /// </summary>
+        /// <param name="text">The text we want to make readable by adding spaces</param>
+        /// <returns>The more readabe and spaced out text</returns>
+        public static string AddSpaces(string text)
         {
-            //throw new NotImplementedException();
+            //TODO expand this function
+            //Ideas:
+            // - Numbers go together
+            // - No is replaced with Number
+            // - Descrip is replaced with full word
+            // - I D is put togther 
+            // - Id is capitalised?
+            return string.Concat(text.Select(c => Char.IsUpper(c) || Char.IsDigit(c) ? " " + c : c.ToString())).TrimStart(' ');
         }
+
+        
     }
 }

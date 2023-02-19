@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Advanced Drive GUI": {
+      "commandName": "Project",
+      "hotReloadEnabled": true
+    }
+  }
+}

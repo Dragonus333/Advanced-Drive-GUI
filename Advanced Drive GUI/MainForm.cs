@@ -58,6 +58,7 @@ namespace Advanced_Drive_GUI
             uploadButton.Enabled = false; //Disable button
 
             DialogResult response = openFileDialog.ShowDialog(); //Show file open dialog
+            string zipFilePath = openFileDialog.FileName; //Get the path to the zip file
 
             if (response != DialogResult.OK) //User didn't get file
             {
@@ -66,8 +67,13 @@ namespace Advanced_Drive_GUI
                 uploadButton.Enabled = true; //Undisable button
                 return;  //Exit method
             }
-
-            string zipFilePath = openFileDialog.FileName; //Get the path to the zip file
+            else if (!zipFilePath.EndsWith(".zip")) //User didn't get a zip file
+            {
+                MessageBox.Show("Zip file not selected. Please select a zip file.",
+                    "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
+                uploadButton.Enabled = true; //Undisable button
+                return;  //Exit method
+            }
 
             ReadConfigFiles(zipFilePath); //Attempt to upload the files
 
@@ -75,6 +81,132 @@ namespace Advanced_Drive_GUI
 
         }
 
-        
+        /// <summary>
+        /// This method converts the config files into tabs and populates those tabs with groupboxes and panels based on the config
+        /// </summary>
+        /// <param name="configFiles">The files we need to base the GUI on</param>
+        public void ConvertConfigFilesToTabs(List<ConfigFile> configFiles)
+        {
+            
+            ConfigFile? blockIdFile = configFiles.SingleOrDefault(c => c.BlockIds is not null); //Find the block id json
+            if (blockIdFile is null || blockIdFile.BlockIds is null) //If we didn't find it correctly
+            {
+                return; //Quit
+            }
+
+            tabControl.TabPages.Clear(); //Get rid of all existing tabs
+
+            foreach (FunctionBlock? functionBlock in configFiles.Select(c => c.FunctionBlock)) //For each function block 
+            {
+                if (functionBlock is null) //If it doesn't exist
+                {
+                    continue; //Skip
+                }
+
+                //Create tabPage
+                TabPage tabPage = new()
+                {
+                    Name = functionBlock.name,
+                    Text = AddSpaces(functionBlock.name),
+                    ToolTipText = functionBlock.description,
+                        
+                };
+                tabControl.TabPages.Add(tabPage);//Add tabpage to tabpages
+                //Create flowlayout for inside tabpage
+                FlowLayoutPanel tabPageflowLayoutPanel = new()
+                {
+                    Dock = DockStyle.Fill,
+                    AutoScroll = true,
+                };
+                tabPage.Controls.Add(tabPageflowLayoutPanel);//Add to tabPage
+
+                //Find blockIds that links to this functionblock name
+                List <BlockId> blocks = blockIdFile.BlockIds.FindAll(b => b.block == functionBlock.name);
+                foreach (BlockId block in blocks) //For each block
+                {
+                    //Create groupbox
+                    GroupBox groupBox = new()
+                    {
+                        Name = block.instance,
+                        Text = AddSpaces(block.instance),
+                        AutoSize = true,
+
+                    };
+                    toolTips.SetToolTip(groupBox, block.id.ToString()); //Set tooltip to id
+
+                    //TODO update this everytime form is adjusted
+                    int calcualtedMaxHeight = tabControl.Height - 75; //Get maximum height for groupbox
+
+                    //Create  for inside groupbox
+                    FlowLayoutPanel groupBoxflowLayoutPanel = new()
+                    {
+                        Dock = DockStyle.Fill,
+                        AutoSize = true,
+                        MaximumSize = new Size(10000000, calcualtedMaxHeight), //Width can be anything, height is limited
+                        FlowDirection = FlowDirection.TopDown,
+                        WrapContents = true,
+
+                    };
+                    groupBox.Controls.Add(groupBoxflowLayoutPanel); //Add to groupbox
+
+                    AddPanels(functionBlock.parameters, groupBoxflowLayoutPanel); //Add Panels
+
+                    tabPageflowLayoutPanel.Controls.Add(groupBox); //Add groupbox to tabpage flowlayout
+                }
+
+                if (blocks.Count == 0) //If there are no blocks for it
+                {
+                    AddPanels(functionBlock.parameters, tabPageflowLayoutPanel); //Just add panels directly to tab
+                }
+                
+            }
+
+            //TODO sort tabs based on block id
+            TabPage infoTab = tabControl.TabPages["Info"]; //Get info tab
+            tabControl.TabPages.Remove(infoTab); //Remove from exisiting position
+            tabControl.TabPages.Insert(0, infoTab); //Add to start
+
+            
+
+        }
+
+        /// <summary>
+        /// Add panels to a flow layout box based on what is in parameters
+        /// </summary>
+        /// <param name="parameters">The parameters that provide the info</param>
+        /// <param name="flowLayoutPanel">The flow layout to add the panels to</param>
+        private static void AddPanels(List<Parameter> parameters, FlowLayoutPanel flowLayoutPanel)
+        {
+            foreach (Parameter parameter in parameters) //For each parameter
+            {
+                //Create panel
+                Panel panel = new()
+                {
+                    Size = new Size(600, 60),
+                    AutoSize = true,
+                };
+                flowLayoutPanel.Controls.Add(panel); //Add panel to layout
+
+                //Create label
+                Label label = new()
+                {
+                    Text = AddSpaces(parameter.name),
+                    Location = new Point(5, 10),
+                    AutoSize = true,
+                };
+                panel.Controls.Add(label); //Add label to panel
+
+                //Create textbox
+                TextBox textBox = new()
+                {
+                    Location = new Point(250, 6),
+                    Size = new Size(150, 26),
+                };
+                panel.Controls.Add(textBox); //Add textbox to panel
+
+                parameter.textBoxes.Add(textBox); //Link parameter and textbox
+
+            }
+        }
     }
 }

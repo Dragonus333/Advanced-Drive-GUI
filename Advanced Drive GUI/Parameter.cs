@@ -3,7 +3,7 @@
     public class Parameter
     {
         public int id { get; set; }
-        public string? name { get; set; }
+        public string name { get; set; } = "";
         public string? type { get; set; }
         public int dimensions { get; set; }
         public string? readLevel { get; set; }
@@ -19,8 +19,8 @@
         public bool isUserParam { get; set; }
         public string? description { get; set; }
 
-        public float[]? values { get; set; }
+        public List<float> values { get; set; } = new List<float>();
 
-        public TextBox[]? textBoxes { get; set; }
+        public List<TextBox> textBoxes { get; set; } = new List<TextBox>();
     }
 }
