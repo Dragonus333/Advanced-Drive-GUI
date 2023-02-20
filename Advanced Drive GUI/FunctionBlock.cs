@@ -21,16 +21,23 @@
             if (incomingobject is null) //If incomingobject is null
             {
                 return 0; //Return zero
-            } 
+            }
             else if (incomingobject is FunctionBlock functionBlock) //If it's a functionblock as it should be
             {
                 return highestContainedId.CompareTo(functionBlock.highestContainedId); //Use the their highest contained ID to compare
-            } 
+            }
             else //If it's something else
             {
                 return 0; //Don't compare
             }
 
+        }
+
+        public static List<FunctionBlock> ListOfAll = new List<FunctionBlock>();
+
+        public FunctionBlock()
+        {
+            ListOfAll.Add(this);
         }
     }
 }

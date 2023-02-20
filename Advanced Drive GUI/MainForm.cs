@@ -59,17 +59,22 @@ namespace Advanced_Drive_GUI
                 MessageBox.Show("File not found. Please select a file.",
                     "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
                 uploadButton.Enabled = true; //Undisable button
-                return;  //Exit method
+            }
+            else if (zipFilePath.EndsWith(".txt")) //User got a .txt file
+            {
+                ClearTextboxesOnThisLevelAndBelow(tabControl.Controls); //Clear all textboxes
+                ReadParamFiles(zipFilePath); //Read param file
             }
             else if (!zipFilePath.EndsWith(".zip")) //User didn't get a zip file
             {
                 MessageBox.Show("Zip file not selected. Please select a zip file.",
                     "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
                 uploadButton.Enabled = true; //Undisable button
-                return;  //Exit method
+            } 
+            else
+            {
+                ReadConfigFiles(zipFilePath); //Attempt to upload the files
             }
-
-            ReadConfigFiles(zipFilePath); //Attempt to upload the files
 
             uploadButton.Enabled = true; //Undisable button
 
@@ -192,6 +197,7 @@ namespace Advanced_Drive_GUI
                     AutoSize = true,
                 };
                 panel.Controls.Add(label); //Add label to panel
+                toolTips.SetToolTip(label, parameter.description); //Add description as tooltip
 
                 //Create textbox
                 TextBox textBox = new()
@@ -203,6 +209,25 @@ namespace Advanced_Drive_GUI
 
                 parameter.textBoxes.Add(textBox); //Link parameter and textbox
 
+            }
+        }
+
+        /// <summary>
+        /// This is a recursive method that clears all textboxes below the controls collection given
+        /// </summary>
+        /// <param name="controls">The controls to clear if they are textboxes and go down if they are not</param>
+        static void ClearTextboxesOnThisLevelAndBelow(Control.ControlCollection controls)
+        {
+            foreach (Control control in controls) //For each Control on this level (if there is any)
+            {
+                if (control is TextBox textBox) //If it's a textbox
+                {
+                    textBox.Clear(); //Clear it
+                }
+                else //Else
+                {
+                    ClearTextboxesOnThisLevelAndBelow(control.Controls); //Go down a level and repeat
+                }
             }
         }
 

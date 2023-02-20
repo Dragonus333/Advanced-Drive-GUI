@@ -1,6 +1,5 @@
 using Newtonsoft.Json;
 using System.IO.Compression;
-using System.Windows.Forms;
 
 namespace Advanced_Drive_GUI
 {
@@ -138,6 +137,9 @@ namespace Advanced_Drive_GUI
         public static void ReadConfigFiles(string zipFilePath)
         {
 
+            //Remove existing stored config details
+            FunctionBlock.ListOfAll.Clear(); //Clear all function blocks
+
             using ZipArchive zip = ZipFile.Open(zipFilePath, ZipArchiveMode.Read); //Read the .zip file
 
             List<ConfigFile> ConfigFiles = new(); //Start a list of config files
@@ -168,13 +170,61 @@ namespace Advanced_Drive_GUI
         }
 
         /// <summary>
+        /// This method takes a param file and uploads all it's contents to the form.
+        /// </summary>
+        /// <param name="txtFilePath">The text file to use</param>
+        public static void ReadParamFiles(string txtFilePath)
+        {
+
+            foreach (string line in File.ReadAllLines(txtFilePath)) //For each line in file
+            {
+                string firstPart = line.Split('.')[0]; //Get the first part of the line before the '.'
+                FunctionBlock? functionBlock = FunctionBlock.ListOfAll.SingleOrDefault(f => f.name == firstPart); //Use that to locate function block
+                if (functionBlock is null) //If unable to find
+                {
+                    continue; //Skip to next line
+                }
+
+                string secondPart = line.Split(new char[] { '.', ' ','[' })[1]; //Get the second part of the line between '.' and the ' '
+                Parameter? parameter = functionBlock.parameters.SingleOrDefault(f => f.name == secondPart); //Use it to find the correct parameter
+                if (parameter is null) //If unable to find
+                {
+                    continue; //Skip to next line
+                }
+
+                string valuePart = line.Split(new char[] { '=', ';' }, StringSplitOptions.TrimEntries)[1]; //Get the actual value stored by the file in between the '=' and ';'
+
+                //This code converts the object into it's corrosponding data type based on the parameter type
+                object actualValue = parameter.type switch
+                {
+                    "string32" => valuePart = valuePart.Trim('"'), //If string, trim quote marks
+                    "bool" => bool.Parse(valuePart), //If boolean, convert to bool
+                    "float32" => float.Parse(valuePart), //If floating-point number, convert to float
+                    "uint32" => uint.Parse(valuePart), //If unsigned integer, convert to uint
+                    _ => throw new Exception($"Unknown object type for parameter called {parameter.type}"), //If it's none of those, throw error message
+                };
+
+                parameter.values.Add(actualValue); //Add the actual value to the parameter
+
+                //TODO remove this by adding mutiple textboxes based on parameter dimension
+                if (parameter.textBoxes[0].Text != string.Empty) //If the textbox was not empty
+                {
+                    parameter.textBoxes[0].Text += ", "; //Put a comma between the new value and last
+                }
+                parameter.textBoxes[0].Text += actualValue.ToString(); //Put the value as a string into the appropriate textbox
+
+
+            }
+        }
+
+        /// <summary>
         /// This function adds spaces before capital letters
         /// </summary>
         /// <param name="text">The text we want to make readable by adding spaces</param>
         /// <returns>The more readabe and spaced out text</returns>
         public static string AddSpaces(string text)
         {
-            //TODO expand this function
+            //TODO expand the addspaces function
             //Ideas:
             // - Numbers go together
             // - No is replaced with Number
