@@ -1,14 +1,8 @@
-using Microsoft.VisualBasic;
-using Newtonsoft.Json;
-using System.IO.Compression;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Windows.Forms;
 using static Advanced_Drive_GUI.Program;
 
 namespace Advanced_Drive_GUI
 {
-    public partial class MainForm : System.Windows.Forms.Form
+    public partial class MainForm : Form
     {
 
         /// <summary>
@@ -134,15 +128,14 @@ namespace Advanced_Drive_GUI
 
                     functionBlock.highestContainedId = block.id; //Set the highest contained id (This will be the last one assigned)
 
-                    //TODO update this everytime form is adjusted
-                    int calcualtedMaxHeight = tabControl.Height - 75; //Get maximum height for groupbox
+                    int calculatedMaxHeight = tabControl.Height - 75; //Get maximum height for groupbox
 
                     //Create  for inside groupbox
                     FlowLayoutPanel groupBoxflowLayoutPanel = new()
                     {
                         Dock = DockStyle.Fill,
                         AutoSize = true,
-                        MaximumSize = new Size(10000000, calcualtedMaxHeight), //Width can be anything, height is limited
+                        MaximumSize = new Size(10000000, calculatedMaxHeight), //Width can be anything, height is limited
                         FlowDirection = FlowDirection.TopDown,
                         WrapContents = true,
 
@@ -178,7 +171,7 @@ namespace Advanced_Drive_GUI
         /// </summary>
         /// <param name="parameters">The parameters that provide the info</param>
         /// <param name="flowLayoutPanel">The flow layout to add the panels to</param>
-        private static void AddPanels(List<Parameter> parameters, FlowLayoutPanel flowLayoutPanel)
+        private void AddPanels(List<Parameter> parameters, FlowLayoutPanel flowLayoutPanel)
         {
             foreach (Parameter parameter in parameters) //For each parameter
             {
@@ -188,6 +181,7 @@ namespace Advanced_Drive_GUI
                     Size = new Size(600, 60),
                     AutoSize = true,
                 };
+                toolTips.SetToolTip(panel, parameter.description); //Add description as tooltip
                 flowLayoutPanel.Controls.Add(panel); //Add panel to layout
 
                 //Create label
@@ -209,6 +203,35 @@ namespace Advanced_Drive_GUI
 
                 parameter.textBoxes.Add(textBox); //Link parameter and textbox
 
+            }
+        }
+
+        /// <summary>
+        /// This method runs when the form is resized. 
+        /// It allows the groupboxes to expand downwards as much as possible.
+        /// </summary>
+        /// <param name="sender">The Main Form</param>
+        /// <param name="e">Event Arguments</param>
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            //TODO Remove some of these restrictions once test GUI is gone
+
+            int calculatedMaxHeight = tabControl.Height - 75; //Calculate the optimal height for the height of the tab control
+
+            foreach (TabPage tab in tabControl.TabPages) //For each tab
+            {
+                if (tab.Controls.Count == 0) //If there are no tabs in the tab
+                {
+                    continue; //Skip this one
+                }
+
+                foreach (GroupBox groupBox in tab.Controls[0].Controls.OfType<GroupBox>()) //For each groupbox in tab
+                {
+                    if (groupBox.Controls.Count != 0 && groupBox.Controls[0] is FlowLayoutPanel flowLayout) //If the groupbox has a flowlayout in
+                    {
+                        flowLayout.MaximumSize = new Size(10000000, calculatedMaxHeight); //Change maximum height based on the tab control height
+                    }
+                }
             }
         }
     }
