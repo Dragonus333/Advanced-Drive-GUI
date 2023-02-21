@@ -213,7 +213,7 @@ namespace Advanced_Drive_GUI
                 if (parameter.type == "string32") //If the actual value is a string
                 {
                     string text = ((string)actualValue).PadRight(parameter.dimensions*2); //Get the string and pad it out based on it's dimension
-                    for (int i = 0; i < parameter.dimensions; i += 2) //For every two characters
+                    for (int i = 0; i < parameter.dimensions * 2; i += 2) //For every two characters
                     {
                         string charPair = text.Substring(i, 2); //Get them
                         parameter.values.Add(charPair); //Add each as a value
