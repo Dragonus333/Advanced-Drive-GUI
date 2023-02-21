@@ -172,12 +172,14 @@ namespace Advanced_Drive_GUI
         }
 
         /// <summary>
-        /// Add panels to a flow layout box based on what is in parameters
+        /// Add panels to a flow layout box based on what infomation is provided about the parameters
         /// </summary>
         /// <param name="parameters">The parameters that provide the info</param>
         /// <param name="flowLayoutPanel">The flow layout to add the panels to</param>
         private void AddPanels(List<Parameter> parameters, FlowLayoutPanel flowLayoutPanel)
         {
+            string[] positionNames = new string[] { "Upper", "Lower", "Default", "Value" }; //These are position names
+
             foreach (Parameter parameter in parameters) //For each parameter
             {
                 //Create panel
@@ -199,15 +201,53 @@ namespace Advanced_Drive_GUI
                 panel.Controls.Add(label); //Add label to panel
                 toolTips.SetToolTip(label, parameter.description); //Add description as tooltip
 
-                //Create textbox
-                TextBox textBox = new()
-                {
-                    Location = new Point(250, 6),
-                    Size = new Size(150, 26),
-                };
-                panel.Controls.Add(textBox); //Add textbox to panel
 
-                parameter.textBoxes.Add(textBox); //Link parameter and textbox
+                for (int i = 0; i < parameter.dimensions; i++)
+                {
+                    //Create textbox
+                    TextBox textBox = new();
+                    
+                    if (parameter.dimensions == 1) //If only one textbox 
+                    {
+                        //Calculate normal location and size
+                        textBox.Location = new Point(250, 6);
+                        textBox.Size = new Size(150, 26);
+                    }
+                    else if (parameter.dimensions == 3 || parameter.dimensions == 4) //If only three or four textboxes
+                    {
+                        //Create label
+                        Label positionLabel = new()
+                        {
+                            Text = positionNames[i] +":", //Put position name
+
+                            //Calculate location before textboxes
+                            Location = new Point(250 + (75  * i*2), 6), 
+
+                            //Calculate size or get autosize
+                            //Size = new Size(75, 26),
+                            AutoSize = true,
+                        };
+                        panel.Controls.Add(positionLabel); //Add label to panel
+                        
+                        //Calculate textbox position after labels
+                        textBox.Location = new Point(250 + (75 + 75 * i*2), 6);
+                        //Set Size
+                        textBox.Size = new Size(75, 26);
+
+                        toolTips.SetToolTip(textBox, positionNames[i]); //Add position name as tooltip
+
+                    }
+                    else //If any other size
+                    {
+                        textBox.Location = new Point(250+(40*i), 6); //Set positions close together but not overlapping
+                        textBox.Size = new Size(40, 26); //Set smaller size
+                    }
+                        
+                    
+                    panel.Controls.Add(textBox); //Add textbox to panel
+                    parameter.textBoxes.Add(textBox); //Link parameter and textbox
+
+                }
 
             }
         }

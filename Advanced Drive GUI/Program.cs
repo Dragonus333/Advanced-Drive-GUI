@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System.Data;
 using System.IO.Compression;
 
 namespace Advanced_Drive_GUI
@@ -139,6 +140,7 @@ namespace Advanced_Drive_GUI
 
             //Remove existing stored config details
             FunctionBlock.ListOfAll.Clear(); //Clear all function blocks
+            Parameter.ListOfAll.Clear(); //Clear all parameters
 
             using ZipArchive zip = ZipFile.Open(zipFilePath, ZipArchiveMode.Read); //Read the .zip file
 
@@ -175,6 +177,10 @@ namespace Advanced_Drive_GUI
         /// <param name="txtFilePath">The text file to use</param>
         public static void ReadParamFiles(string txtFilePath)
         {
+            foreach (Parameter parameter in Parameter.ListOfAll) //For each parameter
+            {
+                parameter.values.Clear(); //Get rid of any exisiting values
+            }
 
             foreach (string line in File.ReadAllLines(txtFilePath)) //For each line in file
             {
@@ -204,14 +210,23 @@ namespace Advanced_Drive_GUI
                     _ => throw new Exception($"Unknown object type for parameter called {parameter.type}"), //If it's none of those, throw error message
                 };
 
-                parameter.values.Add(actualValue); //Add the actual value to the parameter
-
-                //TODO remove this by adding mutiple textboxes based on parameter dimension
-                if (parameter.textBoxes[0].Text != string.Empty) //If the textbox was not empty
+                if (parameter.type == "string32") //If the actual value is a string
                 {
-                    parameter.textBoxes[0].Text += ", "; //Put a comma between the new value and last
+                    string text = ((string)actualValue).PadRight(parameter.dimensions*2); //Get the string and pad it out based on it's dimension
+                    for (int i = 0; i < parameter.dimensions; i += 2) //For every two characters
+                    {
+                        string charPair = text.Substring(i, 2); //Get them
+                        parameter.values.Add(charPair); //Add each as a value
+                        int index = parameter.values.Count - 1; //Get the index of the new added value
+                        parameter.textBoxes[index].Text += charPair.ToString(); //Put the value as a string into the appropriate textbox
+                    }
+                } 
+                else
+                {
+                    parameter.values.Add(actualValue); //Add the actual value to the parameter
+                    int index = parameter.values.Count - 1; //Get the index of the added value
+                    parameter.textBoxes[index].Text += actualValue.ToString(); //Put the value as a string into the appropriate textbox
                 }
-                parameter.textBoxes[0].Text += actualValue.ToString(); //Put the value as a string into the appropriate textbox
 
 
             }
