@@ -241,14 +241,36 @@ namespace Advanced_Drive_GUI
         {
             //TODO expand the addspaces function
             //Ideas:
+            // - Spaces between words based on 
             // - Numbers go together
-            // - No is replaced with Number
+            // - "No" is replaced with Number
             // - Descrip is replaced with full word
             // - I D is put togther 
-            // - Id is capitalised?
-            return string.Concat(text.Select(c => Char.IsUpper(c) || Char.IsDigit(c) ? " " + c : c.ToString())).TrimStart(' ');
+            // - "Id" is capitalised
+            text = string.Concat(text.Select(c => Char.IsUpper(c) ? " " + c : c.ToString())).TrimStart(' ');
+
+            text = AddSpaceBetweenLettersAndNumbers(text);
+
+            return text;
         }
 
-        
+        static string AddSpaceBetweenLettersAndNumbers(string str)
+        {
+            string result = "";
+            char? prev = null;  // nullable char to keep track of the previous character
+            foreach (char curr in str)
+            {
+                if ((Char.IsLetter(curr) && prev.HasValue && Char.IsNumber(prev.Value)) ||
+                    (Char.IsNumber(curr) && prev.HasValue && Char.IsLetter(prev.Value)))
+                {
+                    result += " ";
+                }
+                result += curr;
+                prev = curr;  // update the previous character to the current character
+            }
+            return result;
+        }
+
+
     }
 }

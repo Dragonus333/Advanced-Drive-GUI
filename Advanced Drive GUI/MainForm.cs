@@ -39,7 +39,7 @@ namespace Advanced_Drive_GUI
         /// </summary>
         public void ToggleDeveloperModeOptions(bool isDeveloperModeOn)
         {
-            uploadButton.Visible = isDeveloperModeOn; //Make upload button appear/disapear depending
+            uploadConfigButton.Visible = isDeveloperModeOn; //Make upload button appear/disapear depending
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Advanced_Drive_GUI
         /// <param name="e">Event arguments</param>
         private void UploadZip(object sender, EventArgs e)
         {
-            uploadButton.Enabled = false; //Disable button
+            uploadConfigButton.Enabled = false; //Disable button
 
             DialogResult response = openFileDialog.ShowDialog(); //Show file open dialog
             string zipFilePath = openFileDialog.FileName; //Get the path to the zip file
@@ -58,7 +58,7 @@ namespace Advanced_Drive_GUI
             {
                 MessageBox.Show("File not found. Please select a file.",
                     "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
-                uploadButton.Enabled = true; //Undisable button
+                uploadConfigButton.Enabled = true; //Undisable button
             }
             else if (zipFilePath.EndsWith(".txt")) //User got a .txt file
             {
@@ -69,14 +69,14 @@ namespace Advanced_Drive_GUI
             {
                 MessageBox.Show("Zip file not selected. Please select a zip file.",
                     "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
-                uploadButton.Enabled = true; //Undisable button
+                uploadConfigButton.Enabled = true; //Undisable button
             } 
             else
             {
                 ReadConfigFiles(zipFilePath); //Attempt to upload the files
             }
 
-            uploadButton.Enabled = true; //Undisable button
+            uploadConfigButton.Enabled = true; //Undisable button
 
         }
 
@@ -127,6 +127,7 @@ namespace Advanced_Drive_GUI
                         Name = block.instance,
                         Text = AddSpaces(block.instance),
                         AutoSize = true,
+                        Font = new Font(Font.FontFamily, 10),
 
                     };
                     toolTips.SetToolTip(groupBox, block.id.ToString()); //Set tooltip to id
@@ -143,6 +144,7 @@ namespace Advanced_Drive_GUI
                         MaximumSize = new Size(10000000, calculatedMaxHeight), //Width can be anything, height is limited
                         FlowDirection = FlowDirection.TopDown,
                         WrapContents = true,
+                        Font = Font,
 
                     };
                     groupBox.Controls.Add(groupBoxflowLayoutPanel); //Add to groupbox
@@ -298,6 +300,11 @@ namespace Advanced_Drive_GUI
                     }
                 }
             }
+        }
+
+        private void uploadParambutton_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

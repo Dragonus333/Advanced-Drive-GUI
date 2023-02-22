@@ -63,7 +63,7 @@
             this.signInButton = new System.Windows.Forms.Button();
             this.logoPictureBox = new System.Windows.Forms.PictureBox();
             this.fileNameTextBox = new System.Windows.Forms.TextBox();
-            this.uploadButton = new System.Windows.Forms.Button();
+            this.uploadConfigButton = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -73,6 +73,7 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.uploadParambutton = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).BeginInit();
@@ -360,7 +361,7 @@
             this.fileNameTextBox.TabIndex = 6;
             this.fileNameTextBox.Visible = false;
             // 
-            // uploadButton
+            // uploadConfigButton
             // 
             this.uploadButton.Location = new System.Drawing.Point(406, 38);
             this.uploadButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
@@ -462,12 +463,23 @@
             this.tabControl.Size = new System.Drawing.Size(954, 327);
             this.tabControl.TabIndex = 5;
             // 
+            // uploadParambutton
+            // 
+            this.uploadParambutton.Location = new System.Drawing.Point(741, 47);
+            this.uploadParambutton.Name = "uploadParambutton";
+            this.uploadParambutton.Size = new System.Drawing.Size(227, 53);
+            this.uploadParambutton.TabIndex = 8;
+            this.uploadParambutton.Text = "Upload Param File";
+            this.uploadParambutton.UseVisualStyleBackColor = true;
+            this.uploadParambutton.Visible = false;
+            this.uploadParambutton.Click += new System.EventHandler(this.uploadParambutton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(972, 467);
+            this.ClientSize = new System.Drawing.Size(1215, 584);
             this.Controls.Add(this.uploadButton);
             this.Controls.Add(this.fileNameTextBox);
             this.Controls.Add(this.tabControl);
@@ -534,12 +546,13 @@
         private TabPage tabPage1;
         private TabPage tabPage2;
         private TextBox fileNameTextBox;
-        private Button uploadButton;
+        private Button uploadConfigButton;
         private OpenFileDialog openFileDialog;
         private FlowLayoutPanel flowLayoutPanel1;
         private GroupBox groupBox1;
         private GroupBox groupBox2;
         private ToolTip toolTips;
         private GroupBox groupBox3;
+        private Button uploadParambutton;
     }
 }
