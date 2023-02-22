@@ -1,14 +1,8 @@
-using Microsoft.VisualBasic;
-using Newtonsoft.Json;
-using System.IO.Compression;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Windows.Forms;
 using static Advanced_Drive_GUI.Program;
 
 namespace Advanced_Drive_GUI
 {
-    public partial class MainForm : System.Windows.Forms.Form
+    public partial class MainForm : Form
     {
 
         /// <summary>
@@ -65,17 +59,22 @@ namespace Advanced_Drive_GUI
                 MessageBox.Show("File not found. Please select a file.",
                     "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
                 uploadButton.Enabled = true; //Undisable button
-                return;  //Exit method
+            }
+            else if (zipFilePath.EndsWith(".txt")) //User got a .txt file
+            {
+                ClearTextboxesOnThisLevelAndBelow(tabControl.Controls); //Clear all textboxes
+                ReadParamFiles(zipFilePath); //Read param file
             }
             else if (!zipFilePath.EndsWith(".zip")) //User didn't get a zip file
             {
                 MessageBox.Show("Zip file not selected. Please select a zip file.",
                     "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
                 uploadButton.Enabled = true; //Undisable button
-                return;  //Exit method
+            } 
+            else
+            {
+                ReadConfigFiles(zipFilePath); //Attempt to upload the files
             }
-
-            ReadConfigFiles(zipFilePath); //Attempt to upload the files
 
             uploadButton.Enabled = true; //Undisable button
 
@@ -134,15 +133,14 @@ namespace Advanced_Drive_GUI
 
                     functionBlock.highestContainedId = block.id; //Set the highest contained id (This will be the last one assigned)
 
-                    //TODO update this everytime form is adjusted
-                    int calcualtedMaxHeight = tabControl.Height - 75; //Get maximum height for groupbox
+                    int calculatedMaxHeight = tabControl.Height - 75; //Get maximum height for groupbox
 
                     //Create  for inside groupbox
                     FlowLayoutPanel groupBoxflowLayoutPanel = new()
                     {
                         Dock = DockStyle.Fill,
                         AutoSize = true,
-                        MaximumSize = new Size(10000000, calcualtedMaxHeight), //Width can be anything, height is limited
+                        MaximumSize = new Size(10000000, calculatedMaxHeight), //Width can be anything, height is limited
                         FlowDirection = FlowDirection.TopDown,
                         WrapContents = true,
 
@@ -174,12 +172,14 @@ namespace Advanced_Drive_GUI
         }
 
         /// <summary>
-        /// Add panels to a flow layout box based on what is in parameters
+        /// Add panels to a flow layout box based on what infomation is provided about the parameters
         /// </summary>
         /// <param name="parameters">The parameters that provide the info</param>
         /// <param name="flowLayoutPanel">The flow layout to add the panels to</param>
-        private static void AddPanels(List<Parameter> parameters, FlowLayoutPanel flowLayoutPanel)
+        private void AddPanels(List<Parameter> parameters, FlowLayoutPanel flowLayoutPanel)
         {
+            string[] positionNames = new string[] { "Upper", "Lower", "Default", "Value" }; //These are position names
+
             foreach (Parameter parameter in parameters) //For each parameter
             {
                 //Create panel
@@ -188,6 +188,7 @@ namespace Advanced_Drive_GUI
                     Size = new Size(600, 60),
                     AutoSize = true,
                 };
+                toolTips.SetToolTip(panel, parameter.description); //Add description as tooltip
                 flowLayoutPanel.Controls.Add(panel); //Add panel to layout
 
                 //Create label
@@ -198,17 +199,104 @@ namespace Advanced_Drive_GUI
                     AutoSize = true,
                 };
                 panel.Controls.Add(label); //Add label to panel
+                toolTips.SetToolTip(label, parameter.description); //Add description as tooltip
 
-                //Create textbox
-                TextBox textBox = new()
+
+                for (int i = 0; i < parameter.dimensions; i++)
                 {
-                    Location = new Point(250, 6),
-                    Size = new Size(150, 26),
-                };
-                panel.Controls.Add(textBox); //Add textbox to panel
+                    //Create textbox
+                    TextBox textBox = new();
+                    
+                    if (parameter.dimensions == 1) //If only one textbox 
+                    {
+                        //Calculate normal location and size
+                        textBox.Location = new Point(250, 6);
+                        textBox.Size = new Size(150, 26);
+                    }
+                    else if (parameter.dimensions == 3 || parameter.dimensions == 4) //If only three or four textboxes
+                    {
+                        //Create label
+                        Label positionLabel = new()
+                        {
+                            Text = positionNames[i] +":", //Put position name
 
-                parameter.textBoxes.Add(textBox); //Link parameter and textbox
+                            //Calculate location before textboxes
+                            Location = new Point(250 + (75  * i*2), 6), 
 
+                            //Calculate size or get autosize
+                            //Size = new Size(75, 26),
+                            AutoSize = true,
+                        };
+                        panel.Controls.Add(positionLabel); //Add label to panel
+                        
+                        //Calculate textbox position after labels
+                        textBox.Location = new Point(250 + (75 + 75 * i*2), 6);
+                        //Set Size
+                        textBox.Size = new Size(75, 26);
+
+                        toolTips.SetToolTip(textBox, positionNames[i]); //Add position name as tooltip
+
+                    }
+                    else //If any other size
+                    {
+                        textBox.Location = new Point(250+(40*i), 6); //Set positions close together but not overlapping
+                        textBox.Size = new Size(40, 26); //Set smaller size
+                    }
+                        
+                    
+                    panel.Controls.Add(textBox); //Add textbox to panel
+                    parameter.textBoxes.Add(textBox); //Link parameter and textbox
+
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// This is a recursive method that clears all textboxes below the controls collection given
+        /// </summary>
+        /// <param name="controls">The controls to clear if they are textboxes and go down if they are not</param>
+        static void ClearTextboxesOnThisLevelAndBelow(Control.ControlCollection controls)
+        {
+            foreach (Control control in controls) //For each Control on this level (if there is any)
+            {
+                if (control is TextBox textBox) //If it's a textbox
+                {
+                    textBox.Clear(); //Clear it
+                }
+                else //Else
+                {
+                    ClearTextboxesOnThisLevelAndBelow(control.Controls); //Go down a level and repeat
+                }
+            }
+        }
+
+        /// <summary>
+        /// This method runs when the form is resized. 
+        /// It allows the groupboxes to expand downwards as much as possible.
+        /// </summary>
+        /// <param name="sender">The Main Form</param>
+        /// <param name="e">Event Arguments</param>
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            //TODO Remove some of these restrictions once test GUI is gone
+
+            int calculatedMaxHeight = tabControl.Height - 75; //Calculate the optimal height for the height of the tab control
+
+            foreach (TabPage tab in tabControl.TabPages) //For each tab
+            {
+                if (tab.Controls.Count == 0) //If there are no tabs in the tab
+                {
+                    continue; //Skip this one
+                }
+
+                foreach (GroupBox groupBox in tab.Controls[0].Controls.OfType<GroupBox>()) //For each groupbox in tab
+                {
+                    if (groupBox.Controls.Count != 0 && groupBox.Controls[0] is FlowLayoutPanel flowLayout) //If the groupbox has a flowlayout in
+                    {
+                        flowLayout.MaximumSize = new Size(10000000, calculatedMaxHeight); //Change maximum height based on the tab control height
+                    }
+                }
             }
         }
     }
