@@ -43,42 +43,48 @@ namespace Advanced_Drive_GUI
         }
 
         /// <summary>
-        /// The method runs when the upload button is clicked.
+        /// The method runs when an upload button is clicked. It starts an upload process if it can
         /// </summary>
         /// <param name="sender">The Upload Button</param>
         /// <param name="e">Event arguments</param>
-        private void UploadZip(object sender, EventArgs e)
+        private void UploadFile(object sender, EventArgs e)
         {
+            //TODO separate this function so it only does .zip or .txt not both?
+
             uploadConfigButton.Enabled = false; //Disable button
+            uploadParambutton.Enabled = false; //Disable button
 
             DialogResult response = openFileDialog.ShowDialog(); //Show file open dialog
-            string zipFilePath = openFileDialog.FileName; //Get the path to the zip file
+            string filePath = openFileDialog.FileName; //Get the path to the zip file
 
             if (response != DialogResult.OK) //User didn't get file
             {
                 MessageBox.Show("File not found. Please select a file.",
                     "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
-                uploadConfigButton.Enabled = true; //Undisable button
             }
-            else if (zipFilePath.EndsWith(".txt")) //User got a .txt file
+            else if (filePath.EndsWith(".txt")) //User got a .txt file
             {
                 ClearTextboxesOnThisLevelAndBelow(tabControl.Controls); //Clear all textboxes
-                ReadParamFiles(zipFilePath); //Read param file
+                ReadParamFiles(filePath); //Read param file
             }
-            else if (!zipFilePath.EndsWith(".zip")) //User didn't get a zip file
+            else if (filePath.EndsWith(".zip")) //User got a .zip file
             {
-                MessageBox.Show("Zip file not selected. Please select a zip file.",
-                    "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
-                uploadConfigButton.Enabled = true; //Undisable button
+                ReadConfigFiles(filePath); //Attempt to upload the files
+                fileNameTextBox.Text = openFileDialog.SafeFileName; //Put the file name in the textbox
+                fileNameTextBox.Visible = true; //Make it visable
             } 
-            else
+            else //Else
             {
-                ReadConfigFiles(zipFilePath); //Attempt to upload the files
+                MessageBox.Show("Appropriate file type not selected. Please select a compatiable file.",
+                    "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
+                
             }
 
             uploadConfigButton.Enabled = true; //Undisable button
+            uploadParambutton.Enabled = true; //Undisable button
 
         }
+
 
         /// <summary>
         /// This method converts the config files into tabs and populates those tabs with groupboxes and panels based on the config
@@ -103,7 +109,7 @@ namespace Advanced_Drive_GUI
                 TabPage tabPage = new()
                 {
                     Name = functionBlock.name,
-                    Text = AddSpaces(functionBlock.name),
+                    Text = FormatParameterNames(functionBlock.name),
                     ToolTipText = functionBlock.description,
                         
                 };
@@ -125,7 +131,7 @@ namespace Advanced_Drive_GUI
                     GroupBox groupBox = new()
                     {
                         Name = block.instance,
-                        Text = AddSpaces(block.instance),
+                        Text = FormatParameterNames(block.instance),
                         AutoSize = true,
                         Font = new Font(Font.FontFamily, 10),
 
@@ -196,7 +202,7 @@ namespace Advanced_Drive_GUI
                 //Create label
                 Label label = new()
                 {
-                    Text = AddSpaces(parameter.name),
+                    Text = FormatParameterNames(parameter.name),
                     Location = new Point(5, 10),
                     AutoSize = true,
                 };
@@ -302,9 +308,6 @@ namespace Advanced_Drive_GUI
             }
         }
 
-        private void uploadParambutton_Click(object sender, EventArgs e)
-        {
-
-        }
+       
     }
 }

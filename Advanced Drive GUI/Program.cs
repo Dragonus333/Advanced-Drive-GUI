@@ -233,42 +233,44 @@ namespace Advanced_Drive_GUI
         }
 
         /// <summary>
-        /// This function adds spaces before capital letters
+        /// This function formats parameter names by adding spaces, spliting up numbers and letters, expanding shortened words and sorting out other issues
         /// </summary>
-        /// <param name="text">The text we want to make readable by adding spaces</param>
-        /// <returns>The more readabe and spaced out text</returns>
-        public static string AddSpaces(string text)
+        /// <param name="text">The text we want to format</param>
+        /// <returns>The formatted parameter name</returns>
+        public static string FormatParameterNames(string text)
         {
-            //TODO expand the addspaces function
-            //Ideas:
-            // - Spaces between words based on 
-            // - Numbers go together
-            // - "No" is replaced with Number
-            // - Descrip is replaced with full word
-            // - I D is put togther 
-            // - "Id" is capitalised
             text = string.Concat(text.Select(c => Char.IsUpper(c) ? " " + c : c.ToString())).TrimStart(' ');
 
             text = AddSpaceBetweenLettersAndNumbers(text);
 
+            text = text.Replace("I D", "ID");
+            text = text.Replace("Id", "ID");
+            text = text.Replace("Descrip", "Description");
+            text = text.Replace(" No", " Number");
+
             return text;
         }
 
+        /// <summary>
+        /// This method takes a string parameter and returns a string with spaces added between letters and numbers.
+        /// </summary>
+        /// <param name="str">The string to do this to</param>
+        /// <returns>The string with spaces between letters and numbers</returns>
         static string AddSpaceBetweenLettersAndNumbers(string str)
         {
             string result = "";
-            char? prev = null;  // nullable char to keep track of the previous character
-            foreach (char curr in str)
+            char? previousChar = null;  //nullable char to keep track of the previous character
+            foreach (char currentChar in str) //For each character
             {
-                if ((Char.IsLetter(curr) && prev.HasValue && Char.IsNumber(prev.Value)) ||
-                    (Char.IsNumber(curr) && prev.HasValue && Char.IsLetter(prev.Value)))
+                if ((Char.IsLetter(currentChar) && previousChar.HasValue && Char.IsNumber(previousChar.Value)) ||
+                    (Char.IsNumber(currentChar) && previousChar.HasValue && Char.IsLetter(previousChar.Value))) //If it is between a letter and number
                 {
-                    result += " ";
+                    result += " "; //Add a space
                 }
-                result += curr;
-                prev = curr;  // update the previous character to the current character
+                result += currentChar; //Add letter to final result
+                previousChar = currentChar;  // update the previous character to the current character
             }
-            return result;
+            return result; //Return result
         }
 
 
