@@ -31,16 +31,17 @@
             this.searchButton = new System.Windows.Forms.Button();
             this.searchBarTextBox = new System.Windows.Forms.TextBox();
             this.dbQueryResultsDataGridView = new System.Windows.Forms.DataGridView();
+            this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ConfigName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.selectedConfigTextBox = new System.Windows.Forms.TextBox();
             this.cancelButton = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
-            this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ConfigName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dbQueryResultsDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // searchButton
             // 
+            this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.searchButton.Location = new System.Drawing.Point(430, 11);
             this.searchButton.Name = "searchButton";
             this.searchButton.Size = new System.Drawing.Size(94, 29);
@@ -51,6 +52,8 @@
             // 
             // searchBarTextBox
             // 
+            this.searchBarTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.searchBarTextBox.Location = new System.Drawing.Point(12, 12);
             this.searchBarTextBox.Name = "searchBarTextBox";
             this.searchBarTextBox.Size = new System.Drawing.Size(412, 27);
@@ -59,6 +62,9 @@
             // 
             // dbQueryResultsDataGridView
             // 
+            this.dbQueryResultsDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dbQueryResultsDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dbQueryResultsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dbQueryResultsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -71,33 +77,6 @@
             this.dbQueryResultsDataGridView.RowTemplate.Height = 29;
             this.dbQueryResultsDataGridView.Size = new System.Drawing.Size(512, 336);
             this.dbQueryResultsDataGridView.TabIndex = 2;
-            // 
-            // selectedConfigTextBox
-            // 
-            this.selectedConfigTextBox.Location = new System.Drawing.Point(12, 393);
-            this.selectedConfigTextBox.Name = "selectedConfigTextBox";
-            this.selectedConfigTextBox.Size = new System.Drawing.Size(312, 27);
-            this.selectedConfigTextBox.TabIndex = 3;
-            // 
-            // cancelButton
-            // 
-            this.cancelButton.Location = new System.Drawing.Point(430, 391);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(94, 29);
-            this.cancelButton.TabIndex = 4;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-            // 
-            // applyButton
-            // 
-            this.applyButton.Location = new System.Drawing.Point(330, 391);
-            this.applyButton.Name = "applyButton";
-            this.applyButton.Size = new System.Drawing.Size(94, 29);
-            this.applyButton.TabIndex = 5;
-            this.applyButton.Text = "Apply";
-            this.applyButton.UseVisualStyleBackColor = true;
-            this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
             // 
             // ID
             // 
@@ -112,6 +91,37 @@
             this.ConfigName.HeaderText = "Name";
             this.ConfigName.MinimumWidth = 6;
             this.ConfigName.Name = "ConfigName";
+            // 
+            // selectedConfigTextBox
+            // 
+            this.selectedConfigTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.selectedConfigTextBox.Location = new System.Drawing.Point(12, 393);
+            this.selectedConfigTextBox.Name = "selectedConfigTextBox";
+            this.selectedConfigTextBox.Size = new System.Drawing.Size(312, 27);
+            this.selectedConfigTextBox.TabIndex = 3;
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.Location = new System.Drawing.Point(430, 391);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(94, 29);
+            this.cancelButton.TabIndex = 4;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            // 
+            // applyButton
+            // 
+            this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.applyButton.Location = new System.Drawing.Point(330, 391);
+            this.applyButton.Name = "applyButton";
+            this.applyButton.Size = new System.Drawing.Size(94, 29);
+            this.applyButton.TabIndex = 5;
+            this.applyButton.Text = "Apply";
+            this.applyButton.UseVisualStyleBackColor = true;
+            this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
             // 
             // DatabaseDownloadForm
             // 
