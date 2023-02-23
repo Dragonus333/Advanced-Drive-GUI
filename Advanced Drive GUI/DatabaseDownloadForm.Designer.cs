@@ -31,11 +31,11 @@
             this.searchButton = new System.Windows.Forms.Button();
             this.searchBarTextBox = new System.Windows.Forms.TextBox();
             this.dbQueryResultsDataGridView = new System.Windows.Forms.DataGridView();
-            this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.selectedConfigTextBox = new System.Windows.Forms.TextBox();
             this.cancelButton = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
+            this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ConfigName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dbQueryResultsDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -63,7 +63,7 @@
             this.dbQueryResultsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dbQueryResultsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ID,
-            this.Name});
+            this.ConfigName});
             this.dbQueryResultsDataGridView.Location = new System.Drawing.Point(12, 46);
             this.dbQueryResultsDataGridView.Name = "dbQueryResultsDataGridView";
             this.dbQueryResultsDataGridView.RowHeadersVisible = false;
@@ -71,20 +71,6 @@
             this.dbQueryResultsDataGridView.RowTemplate.Height = 29;
             this.dbQueryResultsDataGridView.Size = new System.Drawing.Size(512, 336);
             this.dbQueryResultsDataGridView.TabIndex = 2;
-            // 
-            // ID
-            // 
-            this.ID.FillWeight = 30F;
-            this.ID.HeaderText = "ID";
-            this.ID.MinimumWidth = 6;
-            this.ID.Name = "ID";
-            // 
-            // Name
-            // 
-            this.Name.FillWeight = 90F;
-            this.Name.HeaderText = "Name";
-            this.Name.MinimumWidth = 6;
-            this.Name.Name = "Name";
             // 
             // selectedConfigTextBox
             // 
@@ -113,6 +99,20 @@
             this.applyButton.UseVisualStyleBackColor = true;
             this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
             // 
+            // ID
+            // 
+            this.ID.FillWeight = 30F;
+            this.ID.HeaderText = "ID";
+            this.ID.MinimumWidth = 6;
+            this.ID.Name = "ID";
+            // 
+            // ConfigName
+            // 
+            this.ConfigName.FillWeight = 90F;
+            this.ConfigName.HeaderText = "Name";
+            this.ConfigName.MinimumWidth = 6;
+            this.ConfigName.Name = "ConfigName";
+            // 
             // DatabaseDownloadForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -137,10 +137,10 @@
         private Button searchButton;
         private TextBox searchBarTextBox;
         private DataGridView dbQueryResultsDataGridView;
-        private DataGridViewTextBoxColumn ID;
-        private DataGridViewTextBoxColumn Name;
         private TextBox selectedConfigTextBox;
         private Button cancelButton;
         private Button applyButton;
+        private DataGridViewTextBoxColumn ID;
+        private DataGridViewTextBoxColumn ConfigName;
     }
 }
