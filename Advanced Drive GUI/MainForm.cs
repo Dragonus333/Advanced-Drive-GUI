@@ -308,6 +308,10 @@ namespace Advanced_Drive_GUI
             }
         }
 
-       
+        private void openDatabaseDownloadForm(object sender, EventArgs e)
+        {
+            DatabaseDownloadForm form = new DatabaseDownloadForm();
+            form.Show(); //open DatabaseDownloadForm
+        }
     }
 }
