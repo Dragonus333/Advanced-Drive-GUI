@@ -43,46 +43,56 @@ namespace Advanced_Drive_GUI
         }
 
         /// <summary>
+        /// The method runs when the upload config button is clicked. It starts the upload config process if it can
+        /// </summary>
+        /// <param name="sender">The upload config button</param>
+        /// <param name="e">Event arguments</param>
+        private void UploadConfigFile(object sender, EventArgs e)
+        {
+            UploadAnyFile(uploadConfigButton, openConfigFileDialog, ".zip", ReadConfigFiles);
+        }
+
+        /// <summary>
+        /// The method runs when the upload param button is clicked. It starts the upload param process if it can
+        /// </summary>
+        /// <param name="sender">The upload param button</param>
+        /// <param name="e">Event arguments</param>
+        private void UploadParamFile(object sender, EventArgs e)
+        {
+            UploadAnyFile(uploadParambutton, openParamFileDialog, ".txt", ReadParamFiles);
+        }
+
+        /// <summary>
         /// The method runs when an upload button is clicked. It starts an upload process if it can
         /// </summary>
-        /// <param name="sender">The Upload Button</param>
-        /// <param name="e">Event arguments</param>
-        private void UploadFile(object sender, EventArgs e)
+        /// <param name="buttonToDisable">This is the button that is disabled whilst the program is running</param>
+        /// <param name="fileDialog">This is the file dialog used by the user to select a file</param>
+        /// <param name="fileExt">This is the file extension used to confirm the file is the correct type</param>
+        /// <param name="methodUsedToReadFile">This is the method used to read the file</param>
+        private static void UploadAnyFile(Button buttonToDisable, FileDialog fileDialog,string fileExt, Action<string> methodUsedToReadFile)
         {
-            //TODO separate this function so it only does .zip or .txt not both?
+            buttonToDisable.Enabled = false; //Disable button whilst method running
 
-            uploadConfigButton.Enabled = false; //Disable button
-            uploadParambutton.Enabled = false; //Disable button
-
-            DialogResult response = openFileDialog.ShowDialog(); //Show file open dialog
-            string filePath = openFileDialog.FileName; //Get the path to the zip file
+            DialogResult response = fileDialog.ShowDialog(); //Show open file dialog
+            string filePath = fileDialog.FileName; //Get the path to the file
 
             if (response != DialogResult.OK) //User didn't get file
             {
-                MessageBox.Show("File not found. Please select a file.",
+                MessageBox.Show($"File not found. Please select a {fileExt} file.",
                     "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
             }
-            else if (filePath.EndsWith(".txt")) //User got a .txt file
+            else if (filePath.EndsWith(fileExt)) //If user got a file with the correct file extension 
             {
-                ClearTextboxesOnThisLevelAndBelow(tabControl.Controls); //Clear all textboxes
-                ReadParamFiles(filePath); //Read param file
+                methodUsedToReadFile(filePath); //Read the file
             }
-            else if (filePath.EndsWith(".zip")) //User got a .zip file
+            else //Else the file wasn't the correct type
             {
-                ReadConfigFiles(filePath); //Attempt to upload the files
-                fileNameTextBox.Text = openFileDialog.SafeFileName; //Put the file name in the textbox
-                fileNameTextBox.Visible = true; //Make it visable
-            } 
-            else //Else
-            {
-                MessageBox.Show("Appropriate file type not selected. Please select a compatiable file.",
+                MessageBox.Show($"Appropriate file type not selected. Please select a compatiable {fileExt} file.",
                     "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
-                
+
             }
 
-            uploadConfigButton.Enabled = true; //Undisable button
-            uploadParambutton.Enabled = true; //Undisable button
-
+            buttonToDisable.Enabled = true; //Undisable button
         }
 
 
@@ -264,7 +274,7 @@ namespace Advanced_Drive_GUI
         /// This is a recursive method that clears all textboxes below the controls collection given
         /// </summary>
         /// <param name="controls">The controls to clear if they are textboxes and go down if they are not</param>
-        static void ClearTextboxesOnThisLevelAndBelow(Control.ControlCollection controls)
+        public static void ClearTextboxesOnThisLevelAndBelow(Control.ControlCollection controls)
         {
             foreach (Control control in controls) //For each Control on this level (if there is any)
             {

@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System.Data;
 using System.IO.Compression;
+using System.Windows.Forms;
 
 namespace Advanced_Drive_GUI
 {
@@ -138,6 +139,9 @@ namespace Advanced_Drive_GUI
         public static void ReadConfigFiles(string zipFilePath)
         {
 
+            mainForm.fileNameTextBox.Text = mainForm.openConfigFileDialog.SafeFileName; //Put the file name in the textbox
+            mainForm.fileNameTextBox.Visible = true; //Make it visable
+
             //Remove existing stored config details
             FunctionBlock.ListOfAll.Clear(); //Clear all function blocks
             Parameter.ListOfAll.Clear(); //Clear all parameters
@@ -177,6 +181,9 @@ namespace Advanced_Drive_GUI
         /// <param name="txtFilePath">The text file to use</param>
         public static void ReadParamFiles(string txtFilePath)
         {
+
+            MainForm.ClearTextboxesOnThisLevelAndBelow(mainForm.tabControl.Controls); //Clear all textboxes
+
             foreach (Parameter parameter in Parameter.ListOfAll) //For each parameter
             {
                 parameter.values.Clear(); //Get rid of any exisiting values
