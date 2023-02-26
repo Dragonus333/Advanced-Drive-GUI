@@ -34,6 +34,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openParamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFromDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,13 +77,14 @@
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.uploadParambutton = new System.Windows.Forms.Button();
             this.openParamFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.openParamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).BeginInit();
             this.tabPage1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.tabControl.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -133,6 +135,16 @@
             this.openConfigToolStripMenuItem.Size = new System.Drawing.Size(312, 34);
             this.openConfigToolStripMenuItem.Text = "&Open Config File";
             this.openConfigToolStripMenuItem.Click += new System.EventHandler(this.UploadConfigFile);
+            // 
+            // openParamToolStripMenuItem
+            // 
+            this.openParamToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openParamToolStripMenuItem.Image")));
+            this.openParamToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.openParamToolStripMenuItem.Name = "openParamToolStripMenuItem";
+            this.openParamToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openParamToolStripMenuItem.Size = new System.Drawing.Size(312, 34);
+            this.openParamToolStripMenuItem.Text = "&Open Param File";
+            this.openParamToolStripMenuItem.Click += new System.EventHandler(this.UploadParamFile);
             // 
             // openFromDatabaseToolStripMenuItem
             // 
@@ -491,15 +503,10 @@
             this.openParamFileDialog.DefaultExt = "txt";
             this.openParamFileDialog.Filter = "Text files |*.txt";
             // 
-            // openParamToolStripMenuItem
+            // errorProvider
             // 
-            this.openParamToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openParamToolStripMenuItem.Image")));
-            this.openParamToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.openParamToolStripMenuItem.Name = "openParamToolStripMenuItem";
-            this.openParamToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openParamToolStripMenuItem.Size = new System.Drawing.Size(312, 34);
-            this.openParamToolStripMenuItem.Text = "&Open Param File";
-            this.openParamToolStripMenuItem.Click += new System.EventHandler(this.UploadParamFile);
+            this.errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
+            this.errorProvider.ContainerControl = this;
             // 
             // MainForm
             // 
@@ -531,6 +538,7 @@
             this.tabPage1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.tabControl.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -585,5 +593,6 @@
         public OpenFileDialog openParamFileDialog;
         public OpenFileDialog openConfigFileDialog;
         private ToolStripMenuItem openParamToolStripMenuItem;
+        private ErrorProvider errorProvider;
     }
 }

@@ -40,6 +40,7 @@ namespace Advanced_Drive_GUI
         public void ToggleDeveloperModeOptions(bool isDeveloperModeOn)
         {
             uploadConfigButton.Visible = isDeveloperModeOn; //Make upload button appear/disapear depending
+            uploadParambutton.Visible = isDeveloperModeOn; //Make param button appear/disapear depending
         }
 
         /// <summary>
@@ -119,7 +120,7 @@ namespace Advanced_Drive_GUI
                 TabPage tabPage = new()
                 {
                     Name = functionBlock.name,
-                    Text = FormatParameterNames(functionBlock.name),
+                    Text = FormatNames(functionBlock.name),
                     ToolTipText = functionBlock.description,
                         
                 };
@@ -129,7 +130,10 @@ namespace Advanced_Drive_GUI
                 FlowLayoutPanel tabPageflowLayoutPanel = new()
                 {
                     Dock = DockStyle.Fill,
+                    AutoSize = true,
                     AutoScroll = true,
+                    FlowDirection = FlowDirection.TopDown,
+                    WrapContents = true,
                 };
                 tabPage.Controls.Add(tabPageflowLayoutPanel);//Add to tabPage
 
@@ -141,7 +145,7 @@ namespace Advanced_Drive_GUI
                     GroupBox groupBox = new()
                     {
                         Name = block.instance,
-                        Text = FormatParameterNames(block.instance),
+                        Text = FormatNames(block.instance),
                         AutoSize = true,
                         Font = new Font(Font.FontFamily, 10),
 
@@ -212,7 +216,7 @@ namespace Advanced_Drive_GUI
                 //Create label
                 Label label = new()
                 {
-                    Text = FormatParameterNames(parameter.name),
+                    Text = FormatNames(parameter.name),
                     Location = new Point(5, 10),
                     AutoSize = true,
                 };
@@ -222,14 +226,23 @@ namespace Advanced_Drive_GUI
 
                 for (int i = 0; i < parameter.dimensions; i++)
                 {
-                    //Create textbox
-                    TextBox textBox = new();
                     
+                    TextBox textBox = new(); //Create textbox
+                    textBox.TextChanged += TextBoxTextChanged; //Assign function
+
                     if (parameter.dimensions == 1) //If only one textbox 
                     {
                         //Calculate normal location and size
                         textBox.Location = new Point(250, 6);
                         textBox.Size = new Size(150, 26);
+
+                        Label unitsLabel = new()
+                        {
+                            Text = FormatNames(parameter.units).PadRight(2),
+                            Location = new Point(textBox.Location.X + textBox.Size.Width + 5, 10),
+                            AutoSize = true,
+                        };
+                        panel.Controls.Add(unitsLabel); //Add units label to panel
                     }
                     else if (parameter.dimensions == 3 || parameter.dimensions == 4) //If only three or four textboxes
                     {
@@ -260,14 +273,85 @@ namespace Advanced_Drive_GUI
                         textBox.Location = new Point(250+(40*i), 6); //Set positions close together but not overlapping
                         textBox.Size = new Size(40, 26); //Set smaller size
                     }
-                        
+
                     
+
                     panel.Controls.Add(textBox); //Add textbox to panel
                     parameter.textBoxes.Add(textBox); //Link parameter and textbox
+                    parameter.values.Add(""); //Add default value as well
 
                 }
 
             }
+        }
+
+        /// <summary>
+        ///  This function runs whenever the textbox recieves new text
+        /// </summary>
+        /// <param name="sender">A textbox</param>
+        /// <param name="e">Event Arguments</param>
+        private void TextBoxTextChanged(object? sender, EventArgs e)
+        {
+            if (sender is null) //If there is no sender
+            {
+                return; //Quit. This shouldn't happen
+            }
+
+            TextBox textBox = (TextBox)sender; //Convert the sender into textbox
+            Parameter parameter = Parameter.ListOfAll.Single(p => p.textBoxes.Contains(sender));//Get the parameter the textbox is linked to
+
+            string changedText = textBox.Text;//Get the newly changed text
+            string error = ""; //Initialize potential error
+
+            object? objectTheTextRepresents = null; //Initialize potential object to save
+
+            try //Try to
+            {
+                objectTheTextRepresents = ConvertStringToParameterValue(parameter, ref changedText); //Convert the string to the correct object
+            }
+            catch (Exception) //If it doesn't work
+            {
+                error = $"The text inputted into {parameter.name} can't be converted to a {parameter.type}"; //Set error
+
+                if (changedText == "" || changedText == ".") //If it's either of these strings
+                {
+                    errorProvider.SetError(textBox, null); //Don't set error
+                    return; //Quit early
+                    //As it might become something later, no need to report
+                }
+            }
+            
+            //Test it's within the bounds
+            if (objectTheTextRepresents is int or float) //If it is a number
+            {
+                float number = (float)objectTheTextRepresents; //Get the number
+                if (parameter.lowerLimit > number || number > parameter.upperLimit) //If it is outside it's limits
+                {
+                    error = $"The text inputted into {parameter.name} must be between {parameter.lowerLimit} and {parameter.upperLimit}";//Set error
+                }
+            }
+            
+            if (error != "" || objectTheTextRepresents == null) //If there is an error or the object wasn't found
+            {
+                if (errorProvider.GetError(textBox) != error) //If it's a new error message
+                {
+                    errorProvider.SetError(textBox, error); //Show the error next to the textbox
+
+                    if (uploadParambutton.Enabled == true) //If we're not uploading
+                    {
+                        MessageBox.Show(error, "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user in a messagebox
+                    }
+                    
+                }
+            } 
+            else //If there is no error
+            {
+                errorProvider.SetError(textBox, null); //Extinguish error next to textbox if it is there
+                int textBoxIndex = parameter.textBoxes.IndexOf(textBox); //Get index of textbox
+                parameter.values[textBoxIndex] = objectTheTextRepresents; //Save the object to the correct value
+            }
+
+
         }
 
         /// <summary>

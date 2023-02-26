@@ -7,6 +7,11 @@ namespace Advanced_Drive_GUI
 {
     internal static class Program
     {
+        public const string StringTypeString = "string32";
+        public const string BoolTypeString = "bool";
+        public const string FloatTypeString = "float32";
+        public const string UIntTypeString = "uint32";
+
         /// <summary>
         /// The main form of the program
         /// </summary>
@@ -198,7 +203,7 @@ namespace Advanced_Drive_GUI
                     continue; //Skip to next line
                 }
 
-                string secondPart = line.Split(new char[] { '.', ' ','[' })[1]; //Get the second part of the line between '.' and the ' '
+                string secondPart = line.Split(new char[] { '.', ' ', '[' })[1]; //Get the second part of the line between '.' and the ' '
                 Parameter? parameter = functionBlock.parameters.SingleOrDefault(f => f.name == secondPart); //Use it to find the correct parameter
                 if (parameter is null) //If unable to find
                 {
@@ -207,19 +212,12 @@ namespace Advanced_Drive_GUI
 
                 string valuePart = line.Split(new char[] { '=', ';' }, StringSplitOptions.TrimEntries)[1]; //Get the actual value stored by the file in between the '=' and ';'
 
-                //This code converts the object into it's corrosponding data type based on the parameter type
-                object actualValue = parameter.type switch
-                {
-                    "string32" => valuePart = valuePart.Trim('"'), //If string, trim quote marks
-                    "bool" => bool.Parse(valuePart), //If boolean, convert to bool
-                    "float32" => float.Parse(valuePart), //If floating-point number, convert to float
-                    "uint32" => uint.Parse(valuePart), //If unsigned integer, convert to uint
-                    _ => throw new Exception($"Unknown object type for parameter called {parameter.type}"), //If it's none of those, throw error message
-                };
+                object actualValue = ConvertStringToParameterValue(parameter, ref valuePart);
 
-                if (parameter.type == "string32") //If the actual value is a string
+                if (parameter.type == StringTypeString) //If the actual value is a string
                 {
-                    string text = ((string)actualValue).PadRight(parameter.dimensions*2); //Get the string and pad it out based on it's dimension
+                    string text = ((string)actualValue).Trim('"'); //Get the string and remove it's quote marks
+                    text = text.PadRight(parameter.dimensions * 2); //and pad it out based on it's dimension
                     for (int i = 0; i < parameter.dimensions * 2; i += 2) //For every two characters
                     {
                         string charPair = text.Substring(i, 2); //Get them
@@ -227,7 +225,7 @@ namespace Advanced_Drive_GUI
                         int index = parameter.values.Count - 1; //Get the index of the new added value
                         parameter.textBoxes[index].Text += charPair.ToString(); //Put the value as a string into the appropriate textbox
                     }
-                } 
+                }
                 else
                 {
                     parameter.values.Add(actualValue); //Add the actual value to the parameter
@@ -240,22 +238,51 @@ namespace Advanced_Drive_GUI
         }
 
         /// <summary>
+        /// This function takes a string and tries to turn it into it's appropriate value based on the parameter
+        /// </summary>
+        /// <param name="parameter">The parameter it will be assigned to</param>
+        /// <param name="stringToConvert">The string we are trying to convert</param>
+        /// <returns>The value we have converted the string into</returns>
+        /// <exception cref="Exception">Unknown object type for the parameter</exception>
+        public static object ConvertStringToParameterValue(Parameter parameter, ref string stringToConvert)
+        {
+            //This code converts the object into it's corrosponding data type based on the parameter type
+            object actualValue = parameter.type switch
+            {
+                StringTypeString => stringToConvert, //If string, keep as it is
+                BoolTypeString => bool.Parse(stringToConvert), //If boolean, convert to bool
+                FloatTypeString => float.Parse(stringToConvert), //If floating-point number, convert to float
+                UIntTypeString => uint.Parse(stringToConvert), //If unsigned integer, convert to uint
+                _ => throw new Exception($"Unknown object type for parameter called {parameter.type}"), //If it's none of those, throw error message
+            };
+            return actualValue;
+        }
+
+        /// <summary>
         /// This function formats parameter names by adding spaces, spliting up numbers and letters, expanding shortened words and sorting out other issues
         /// </summary>
         /// <param name="text">The text we want to format</param>
         /// <returns>The formatted parameter name</returns>
-        public static string FormatParameterNames(string text)
+        public static string FormatNames(string? text)
         {
-            text = string.Concat(text.Select(c => Char.IsUpper(c) ? " " + c : c.ToString())).TrimStart(' ');
+            if (text == null) //If text doesn't exist
+            {
+                text = string.Empty; //Put it as an empty string
+            }
 
-            text = AddSpaceBetweenLettersAndNumbers(text);
+            text = string.Concat(text.Select(c => Char.IsUpper(c) ? " " + c : c.ToString())).TrimStart(' '); //Split up words based on capitalisation
 
+            text = AddSpaceBetweenLettersAndNumbers(text); //Add spaces between letters and numbers
+
+            //Make ID consistant across program
             text = text.Replace("I D", "ID");
             text = text.Replace("Id", "ID");
+
+            //Unshorten words
             text = text.Replace("Descrip", "Description");
             text = text.Replace(" No", " Number");
 
-            return text;
+            return text; //Return formatted text
         }
 
         /// <summary>
