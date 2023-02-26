@@ -40,49 +40,60 @@ namespace Advanced_Drive_GUI
         public void ToggleDeveloperModeOptions(bool isDeveloperModeOn)
         {
             uploadConfigButton.Visible = isDeveloperModeOn; //Make upload button appear/disapear depending
+            uploadParambutton.Visible = isDeveloperModeOn; //Make param button appear/disapear depending
+        }
+
+        /// <summary>
+        /// The method runs when the upload config button is clicked. It starts the upload config process if it can
+        /// </summary>
+        /// <param name="sender">The upload config button</param>
+        /// <param name="e">Event arguments</param>
+        private void UploadConfigFile(object sender, EventArgs e)
+        {
+            UploadAnyFile(uploadConfigButton, openConfigFileDialog, ".zip", ReadConfigFiles);
+        }
+
+        /// <summary>
+        /// The method runs when the upload param button is clicked. It starts the upload param process if it can
+        /// </summary>
+        /// <param name="sender">The upload param button</param>
+        /// <param name="e">Event arguments</param>
+        private void UploadParamFile(object sender, EventArgs e)
+        {
+            UploadAnyFile(uploadParambutton, openParamFileDialog, ".txt", ReadParamFiles);
         }
 
         /// <summary>
         /// The method runs when an upload button is clicked. It starts an upload process if it can
         /// </summary>
-        /// <param name="sender">The Upload Button</param>
-        /// <param name="e">Event arguments</param>
-        private void UploadFile(object sender, EventArgs e)
+        /// <param name="buttonToDisable">This is the button that is disabled whilst the program is running</param>
+        /// <param name="fileDialog">This is the file dialog used by the user to select a file</param>
+        /// <param name="fileExt">This is the file extension used to confirm the file is the correct type</param>
+        /// <param name="methodUsedToReadFile">This is the method used to read the file</param>
+        private static void UploadAnyFile(Button buttonToDisable, FileDialog fileDialog,string fileExt, Action<string> methodUsedToReadFile)
         {
-            //TODO separate this function so it only does .zip or .txt not both?
+            buttonToDisable.Enabled = false; //Disable button whilst method running
 
-            uploadConfigButton.Enabled = false; //Disable button
-            uploadParambutton.Enabled = false; //Disable button
-
-            DialogResult response = openFileDialog.ShowDialog(); //Show file open dialog
-            string filePath = openFileDialog.FileName; //Get the path to the zip file
+            DialogResult response = fileDialog.ShowDialog(); //Show open file dialog
+            string filePath = fileDialog.FileName; //Get the path to the file
 
             if (response != DialogResult.OK) //User didn't get file
             {
-                MessageBox.Show("File not found. Please select a file.",
+                MessageBox.Show($"File not found. Please select a {fileExt} file.",
                     "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
             }
-            else if (filePath.EndsWith(".txt")) //User got a .txt file
+            else if (filePath.EndsWith(fileExt)) //If user got a file with the correct file extension 
             {
-                ClearTextboxesOnThisLevelAndBelow(tabControl.Controls); //Clear all textboxes
-                ReadParamFiles(filePath); //Read param file
+                methodUsedToReadFile(filePath); //Read the file
             }
-            else if (filePath.EndsWith(".zip")) //User got a .zip file
+            else //Else the file wasn't the correct type
             {
-                ReadConfigFiles(filePath); //Attempt to upload the files
-                fileNameTextBox.Text = openFileDialog.SafeFileName; //Put the file name in the textbox
-                fileNameTextBox.Visible = true; //Make it visable
-            } 
-            else //Else
-            {
-                MessageBox.Show("Appropriate file type not selected. Please select a compatiable file.",
+                MessageBox.Show($"Appropriate file type not selected. Please select a compatiable {fileExt} file.",
                     "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user
-                
+
             }
 
-            uploadConfigButton.Enabled = true; //Undisable button
-            uploadParambutton.Enabled = true; //Undisable button
-
+            buttonToDisable.Enabled = true; //Undisable button
         }
 
 
@@ -109,7 +120,7 @@ namespace Advanced_Drive_GUI
                 TabPage tabPage = new()
                 {
                     Name = functionBlock.name,
-                    Text = FormatParameterNames(functionBlock.name),
+                    Text = FormatNames(functionBlock.name),
                     ToolTipText = functionBlock.description,
                         
                 };
@@ -119,7 +130,10 @@ namespace Advanced_Drive_GUI
                 FlowLayoutPanel tabPageflowLayoutPanel = new()
                 {
                     Dock = DockStyle.Fill,
+                    AutoSize = true,
                     AutoScroll = true,
+                    FlowDirection = FlowDirection.TopDown,
+                    WrapContents = true,
                 };
                 tabPage.Controls.Add(tabPageflowLayoutPanel);//Add to tabPage
 
@@ -131,7 +145,7 @@ namespace Advanced_Drive_GUI
                     GroupBox groupBox = new()
                     {
                         Name = block.instance,
-                        Text = FormatParameterNames(block.instance),
+                        Text = FormatNames(block.instance),
                         AutoSize = true,
                         Font = new Font(Font.FontFamily, 10),
 
@@ -202,7 +216,7 @@ namespace Advanced_Drive_GUI
                 //Create label
                 Label label = new()
                 {
-                    Text = FormatParameterNames(parameter.name),
+                    Text = FormatNames(parameter.name),
                     Location = new Point(5, 10),
                     AutoSize = true,
                 };
@@ -212,14 +226,23 @@ namespace Advanced_Drive_GUI
 
                 for (int i = 0; i < parameter.dimensions; i++)
                 {
-                    //Create textbox
-                    TextBox textBox = new();
                     
+                    TextBox textBox = new(); //Create textbox
+                    textBox.TextChanged += TextBoxTextChanged; //Assign function
+
                     if (parameter.dimensions == 1) //If only one textbox 
                     {
                         //Calculate normal location and size
                         textBox.Location = new Point(250, 6);
                         textBox.Size = new Size(150, 26);
+
+                        Label unitsLabel = new()
+                        {
+                            Text = FormatNames(parameter.units).PadRight(2),
+                            Location = new Point(textBox.Location.X + textBox.Size.Width + 5, 10),
+                            AutoSize = true,
+                        };
+                        panel.Controls.Add(unitsLabel); //Add units label to panel
                     }
                     else if (parameter.dimensions == 3 || parameter.dimensions == 4) //If only three or four textboxes
                     {
@@ -250,10 +273,12 @@ namespace Advanced_Drive_GUI
                         textBox.Location = new Point(250+(40*i), 6); //Set positions close together but not overlapping
                         textBox.Size = new Size(40, 26); //Set smaller size
                     }
-                        
+
                     
+
                     panel.Controls.Add(textBox); //Add textbox to panel
                     parameter.textBoxes.Add(textBox); //Link parameter and textbox
+                    parameter.values.Add(""); //Add default value as well
 
                 }
 
@@ -261,10 +286,79 @@ namespace Advanced_Drive_GUI
         }
 
         /// <summary>
+        ///  This function runs whenever the textbox recieves new text
+        /// </summary>
+        /// <param name="sender">A textbox</param>
+        /// <param name="e">Event Arguments</param>
+        private void TextBoxTextChanged(object? sender, EventArgs e)
+        {
+            if (sender is null) //If there is no sender
+            {
+                return; //Quit. This shouldn't happen
+            }
+
+            TextBox textBox = (TextBox)sender; //Convert the sender into textbox
+            Parameter parameter = Parameter.ListOfAll.Single(p => p.textBoxes.Contains(sender));//Get the parameter the textbox is linked to
+
+            string changedText = textBox.Text;//Get the newly changed text
+            string error = ""; //Initialize potential error
+
+            object? objectTheTextRepresents = null; //Initialize potential object to save
+
+            try //Try to
+            {
+                objectTheTextRepresents = ConvertStringToParameterValue(parameter, ref changedText); //Convert the string to the correct object
+            }
+            catch (Exception) //If it doesn't work
+            {
+                error = $"The text inputted into {parameter.name} can't be converted to a {parameter.type}"; //Set error
+
+                if (changedText == "" || changedText == ".") //If it's either of these strings
+                {
+                    errorProvider.SetError(textBox, null); //Don't set error
+                    return; //Quit early
+                    //As it might become something later, no need to report
+                }
+            }
+            
+            //Test it's within the bounds
+            if (objectTheTextRepresents is int or float) //If it is a number
+            {
+                float number = (float)objectTheTextRepresents; //Get the number
+                if (parameter.lowerLimit > number || number > parameter.upperLimit) //If it is outside it's limits
+                {
+                    error = $"The text inputted into {parameter.name} must be between {parameter.lowerLimit} and {parameter.upperLimit}";//Set error
+                }
+            }
+            
+            if (error != "" || objectTheTextRepresents == null) //If there is an error or the object wasn't found
+            {
+                if (errorProvider.GetError(textBox) != error) //If it's a new error message
+                {
+                    errorProvider.SetError(textBox, error); //Show the error next to the textbox
+
+                    if (uploadParambutton.Enabled == true) //If we're not uploading
+                    {
+                        MessageBox.Show(error, "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user in a messagebox
+                    }
+                    
+                }
+            } 
+            else //If there is no error
+            {
+                errorProvider.SetError(textBox, null); //Extinguish error next to textbox if it is there
+                int textBoxIndex = parameter.textBoxes.IndexOf(textBox); //Get index of textbox
+                parameter.values[textBoxIndex] = objectTheTextRepresents; //Save the object to the correct value
+            }
+
+
+        }
+
+        /// <summary>
         /// This is a recursive method that clears all textboxes below the controls collection given
         /// </summary>
         /// <param name="controls">The controls to clear if they are textboxes and go down if they are not</param>
-        static void ClearTextboxesOnThisLevelAndBelow(Control.ControlCollection controls)
+        public static void ClearTextboxesOnThisLevelAndBelow(Control.ControlCollection controls)
         {
             foreach (Control control in controls) //For each Control on this level (if there is any)
             {
