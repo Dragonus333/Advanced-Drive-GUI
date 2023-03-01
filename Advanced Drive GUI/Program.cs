@@ -313,7 +313,7 @@ namespace Advanced_Drive_GUI
 
         public static SerialPort ConnectToDrive()
         {
-            string drivePortName = "";
+            string drivePortName = "N/A";
             string[] driveNames = {"TestName"}; //array of all drive names to search for.
             var searcher = new ManagementObjectSearcher("Select * From Win32_SerialPort");
             ManagementObjectCollection collection = searcher.Get(); //get all devices connected via serial port
