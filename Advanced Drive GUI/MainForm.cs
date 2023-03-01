@@ -39,7 +39,6 @@ namespace Advanced_Drive_GUI
         /// </summary>
         public void ToggleDeveloperModeOptions(bool isDeveloperModeOn)
         {
-            uploadConfigButton.Visible = isDeveloperModeOn; //Make upload button appear/disapear depending
             uploadParambutton.Visible = isDeveloperModeOn; //Make param button appear/disapear depending
         }
 
@@ -402,9 +401,9 @@ namespace Advanced_Drive_GUI
             }
         }
 
-        private void openDatabaseDownloadForm(object sender, EventArgs e)
+        private void OpenDatabaseDownloadForm(object sender, EventArgs e)
         {
-            DatabaseDownloadForm form = new DatabaseDownloadForm();
+            DatabaseDownloadForm form = new();
             form.Show(); //open DatabaseDownloadForm
         }
     }
