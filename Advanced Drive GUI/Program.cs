@@ -2,6 +2,9 @@ using Newtonsoft.Json;
 using System.Data;
 using System.IO.Compression;
 using System.Windows.Forms;
+using System.Net.Sockets;
+using System.Management;
+using System.IO.Ports;
 
 namespace Advanced_Drive_GUI
 {
@@ -11,6 +14,7 @@ namespace Advanced_Drive_GUI
         public const string BoolTypeString = "bool";
         public const string FloatTypeString = "float32";
         public const string UIntTypeString = "uint32";
+        public static SerialPort? drivePort;
 
         /// <summary>
         /// The main form of the program
@@ -46,7 +50,6 @@ namespace Advanced_Drive_GUI
         [STAThread]
         static void Main()
         {
-
             ApplicationConfiguration.Initialize(); //Boiler Plate code
             Application.Run(mainForm); //Running the form
         }
@@ -308,5 +311,24 @@ namespace Advanced_Drive_GUI
         }
 
 
+        public static SerialPort ConnectToDrive()
+        {
+            string drivePortName = "";
+            string[] driveNames = {"TestName"}; //array of all drive names to search for.
+            var searcher = new ManagementObjectSearcher("Select * From Win32_SerialPort");
+            ManagementObjectCollection collection = searcher.Get(); //get all devices connected via serial port
+            foreach (var item in collection) //for each device found
+            {
+                //could look for something like "DeviceID" instead of "Name"?
+                string deviceName = (string)item.GetPropertyValue("Name"); //get the name of the current device
+                if (driveNames.Contains(deviceName)) //if the device name matches one of the drive names
+                {
+                    drivePortName = deviceName; //set the port name to match the device name
+                }
+            }
+            SerialPort serialPort = new(drivePortName);
+            serialPort.PortName = drivePortName;
+            return serialPort;
+        }
     }
 }

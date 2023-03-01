@@ -20,7 +20,7 @@ namespace Advanced_Drive_GUI
         /// <param name="e">Event arguments</param>
         private void ConnectDriveButton_Click(object sender, EventArgs e)
         {
-
+            drivePort = ConnectToDrive();
         }
 
         /// <summary>
