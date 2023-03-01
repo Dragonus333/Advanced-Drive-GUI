@@ -14,7 +14,7 @@ namespace Advanced_Drive_GUI
         public const string BoolTypeString = "bool";
         public const string FloatTypeString = "float32";
         public const string UIntTypeString = "uint32";
-        public static SerialPort? drivePort;
+        public static DriveControlObject? driveControlObject = new();
 
         /// <summary>
         /// The main form of the program
@@ -308,27 +308,6 @@ namespace Advanced_Drive_GUI
                 previousChar = currentChar;  // update the previous character to the current character
             }
             return result; //Return result
-        }
-
-
-        public static SerialPort ConnectToDrive()
-        {
-            string drivePortName = "N/A";
-            string[] driveNames = {"TestName"}; //array of all drive names to search for.
-            var searcher = new ManagementObjectSearcher("Select * From Win32_SerialPort");
-            ManagementObjectCollection collection = searcher.Get(); //get all devices connected via serial port
-            foreach (var item in collection) //for each device found
-            {
-                //could look for something like "DeviceID" instead of "Name"?
-                string deviceName = (string)item.GetPropertyValue("Name"); //get the name of the current device
-                if (driveNames.Contains(deviceName)) //if the device name matches one of the drive names
-                {
-                    drivePortName = deviceName; //set the port name to match the device name
-                }
-            }
-            SerialPort serialPort = new(drivePortName);
-            serialPort.PortName = drivePortName;
-            return serialPort;
         }
     }
 }

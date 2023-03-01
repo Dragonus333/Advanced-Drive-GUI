@@ -20,7 +20,15 @@ namespace Advanced_Drive_GUI
         /// <param name="e">Event arguments</param>
         private void ConnectDriveButton_Click(object sender, EventArgs e)
         {
-            drivePort = ConnectToDrive();
+            driveControlObject.ConnectToDrive(); //attempt to connect to drive
+            if (driveControlObject.drivePort == null) //if no drive found
+            {
+                MessageBox.Show("No drive found", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //output error message
+            }
+            else
+            {
+                MessageBox.Show("Drive connected");
+            }
         }
 
         /// <summary>
