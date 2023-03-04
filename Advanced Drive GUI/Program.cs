@@ -1,6 +1,6 @@
-using Newtonsoft.Json;
 using System.Data;
 using System.IO.Compression;
+using System.Text.Json;
 
 namespace Advanced_Drive_GUI
 {
@@ -161,7 +161,7 @@ namespace Advanced_Drive_GUI
                 ConfigFile? configFile; //Create a config file object
                 try
                 {
-                    configFile = JsonConvert.DeserializeObject<ConfigFile>(jsonText); //Turn the json into a C# object called ConfigFile
+                    configFile = JsonSerializer.Deserialize<ConfigFile>(jsonText); //Turn the json into a C# object called ConfigFile
                 }
                 catch (JsonException) //If there is a problem with the file
                 {
