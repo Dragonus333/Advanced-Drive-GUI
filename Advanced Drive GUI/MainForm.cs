@@ -223,62 +223,102 @@ namespace Advanced_Drive_GUI
                 panel.Controls.Add(label); //Add label to panel
                 toolTips.SetToolTip(label, parameter.description); //Add description as tooltip
 
-
-                for (int i = 0; i < parameter.dimensions; i++)
+                for (int i = 0; i < parameter.dimensions; i++) //For each dimension
                 {
-                    
-                    TextBox textBox = new(); //Create textbox
-                    textBox.TextChanged += TextBoxTextChanged; //Assign function
+                    Control control; //
+                    if (parameter.type == StringTypeString)
+                    {
+                        control = new TextBox(); //Create textbox
+                    } 
+                    else if (parameter.type == BoolTypeString)
+                    {
+                        control = new ComboBox()//Create combobox
+                        {
+                            DropDownStyle = ComboBoxStyle.DropDownList, //You can't type with this option. Only select.
+                        }; 
+                        ((ComboBox)control).Items.AddRange(new string[]{ "","True", "False" }); //Add options for it
+                    } 
+                    else
+                    {
+                        if (parameter.lowerLimit == 0 && parameter.upperLimit == 0) //If neither value has clearly been assigned
+                        {
+                            parameter.lowerLimit = (double)decimal.MinValue / 2; //Just let it be whatever
+                            parameter.upperLimit = (double)decimal.MaxValue / 2; //Just let it be whatever
+                        }
+
+                        if (parameter.type == UIntTypeString) //If it's a uInt
+                        {
+                            parameter.decimalPlaces = 1; //It should't have any decimal places
+                        }
+
+                        control = new NumericUpDown()//Create numberic box
+                        {
+                            //Assign values from parameter
+                            Minimum = (decimal)parameter.lowerLimit,
+                            Maximum = (decimal)parameter.upperLimit,
+                            DecimalPlaces = (parameter.decimalPlaces - 1), //This seems right as uints are marked as having one decimal place?
+                            Increment = (decimal)1 / (decimal)Math.Pow(10, parameter.decimalPlaces - 1), //It's 1 for ints, 0.5 for things with 2 decimal places, etc
+                        }; 
+                        
+                    }
+
+                    control.Leave += ChangeParameter; //Assign function
 
                     if (parameter.dimensions == 1) //If only one textbox 
                     {
                         //Calculate normal location and size
-                        textBox.Location = new Point(250, 6);
-                        textBox.Size = new Size(150, 26);
+                        control.Location = new Point(250, 6);
+                        control.Size = new Size(150, 26);
 
                         Label unitsLabel = new()
                         {
                             Text = FormatNames(parameter.units).PadRight(2),
-                            Location = new Point(textBox.Location.X + textBox.Size.Width + 5, 10),
+                            Location = new Point(control.Location.X + control.Size.Width + 5, 10),
                             AutoSize = true,
                         };
                         panel.Controls.Add(unitsLabel); //Add units label to panel
                     }
-                    else if (parameter.dimensions == 3 || parameter.dimensions == 4) //If only three or four textboxes
+                    else if (parameter.dimensions == 2)
+                    {
+                        //Calculate textbox position after labels
+                        control.Location = new Point(250 + (150 * i), 6);
+                        //Set Size
+                        control.Size = new Size(150, 26);
+                    }
+                    else if (parameter.dimensions == 3 || parameter.dimensions == 4) //If only three or four valueEntryControls
                     {
                         //Create label
                         Label positionLabel = new()
                         {
                             Text = positionNames[i] +":", //Put position name
 
-                            //Calculate location before textboxes
-                            Location = new Point(250 + (75  * i*2), 6), 
+                            //Calculate location before valueEntryControls
+                            Location = new Point(250 + (150 * i * 2), 6), 
 
                             //Calculate size or get autosize
-                            //Size = new Size(75, 26),
-                            AutoSize = true,
+                            Size = new Size(75, 26),
                         };
                         panel.Controls.Add(positionLabel); //Add label to panel
                         
                         //Calculate textbox position after labels
-                        textBox.Location = new Point(250 + (75 + 75 * i*2), 6);
+                        control.Location = new Point(250 + (75 + 150 * i*2), 6);
                         //Set Size
-                        textBox.Size = new Size(75, 26);
+                        control.Size = new Size(150, 26);
 
-                        toolTips.SetToolTip(textBox, positionNames[i]); //Add position name as tooltip
+                        toolTips.SetToolTip(control, positionNames[i]); //Add position name as tooltip
 
                     }
                     else //If any other size
                     {
-                        textBox.Location = new Point(250+(40*i), 6); //Set positions close together but not overlapping
-                        textBox.Size = new Size(40, 26); //Set smaller size
+                        control.Location = new Point(250+(40*i), 6); //Set positions close together but not overlapping
+                        control.Size = new Size(40, 26); //Set smaller size
                     }
 
-                    
+                    panel.Controls.Add(control); //Add textbox to panel
 
-                    panel.Controls.Add(textBox); //Add textbox to panel
-                    parameter.textBoxes.Add(textBox); //Link parameter and textbox
-                    parameter.values.Add(""); //Add default value as well
+                    parameter.values.Add(""); //Add default value
+                    parameter.valueEntryControls.Add(control); //Link parameter and textbox
+                    
 
                 }
 
@@ -286,21 +326,22 @@ namespace Advanced_Drive_GUI
         }
 
         /// <summary>
-        ///  This function runs whenever the textbox recieves new text
+        ///  This function runs whenever the users focus leaves the textbox.
+        ///  It tries to save the text into the parameter
         /// </summary>
         /// <param name="sender">A textbox</param>
         /// <param name="e">Event Arguments</param>
-        private void TextBoxTextChanged(object? sender, EventArgs e)
+        private void ChangeParameter(object? sender, EventArgs e)
         {
             if (sender is null) //If there is no sender
             {
                 return; //Quit. This shouldn't happen
             }
 
-            TextBox textBox = (TextBox)sender; //Convert the sender into textbox
-            Parameter parameter = Parameter.ListOfAll.Single(p => p.textBoxes.Contains(sender));//Get the parameter the textbox is linked to
+            Control control = (Control)sender; //Convert the sender into textbox
+            Parameter parameter = Parameter.ListOfAll.Single(p => p.valueEntryControls.Contains(sender));//Get the parameter the textbox is linked to
 
-            string changedText = textBox.Text;//Get the newly changed text
+            string changedText = control.Text;//Get the newly changed text
             string error = ""; //Initialize potential error
 
             object? objectTheTextRepresents = null; //Initialize potential object to save
@@ -315,7 +356,7 @@ namespace Advanced_Drive_GUI
 
                 if (changedText == "" || changedText == ".") //If it's either of these strings
                 {
-                    errorProvider.SetError(textBox, null); //Don't set error
+                    errorProvider.SetError(control, null); //Don't set error
                     return; //Quit early
                     //As it might become something later, no need to report
                 }
@@ -333,21 +374,34 @@ namespace Advanced_Drive_GUI
             
             if (error != "" || objectTheTextRepresents == null) //If there is an error or the object wasn't found
             {
-                if (errorProvider.GetError(textBox) != error) //If it's a new error message
+                if (errorProvider.GetError(control) != error) //If it's a new error message
                 {
-                    errorProvider.SetError(textBox, error); //Show the error next to the textbox
+                    errorProvider.SetError(control, error); //Show the error next to the textbox
 
                     if (uploadParambutton.Enabled == true) //If we're not uploading
                     {
                         MessageBox.Show(error, "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error); //Tell user in a messagebox
+
+                        //TODO Figure out how to go back to tab once clicking off on error
+                        /*
+                        ScrollControlIntoView(control);
+
+                        Control higherControl;
+                        higherControl = control.Parent;
+                        while (higherControl is not TabPage && higherControl is not Form)
+                        {
+                            higherControl = higherControl.Parent;
+                        }
+                        tabControl.SelectedTab = (TabPage)higherControl;
+                        */
                     }
                     
                 }
             } 
             else //If there is no error
             {
-                errorProvider.SetError(textBox, null); //Extinguish error next to textbox if it is there
-                int textBoxIndex = parameter.textBoxes.IndexOf(textBox); //Get index of textbox
+                errorProvider.SetError(control, null); //Extinguish error next to textbox if it is there
+                int textBoxIndex = parameter.valueEntryControls.IndexOf(control); //Get index of textbox
                 parameter.values[textBoxIndex] = objectTheTextRepresents; //Save the object to the correct value
             }
 
@@ -355,20 +409,20 @@ namespace Advanced_Drive_GUI
         }
 
         /// <summary>
-        /// This is a recursive method that clears all textboxes below the controls collection given
+        /// This is a recursive method that clears all valueEntryControls below the controls collection given
         /// </summary>
-        /// <param name="controls">The controls to clear if they are textboxes and go down if they are not</param>
-        public static void ClearTextboxesOnThisLevelAndBelow(Control.ControlCollection controls)
+        /// <param name="controls">The controls to clear if they are valueEntryControls and go down if they are not</param>
+        public static void ClearTextBoxesOnThisLevelAndBelow(Control.ControlCollection controls)
         {
             foreach (Control control in controls) //For each Control on this level (if there is any)
             {
                 if (control is TextBox textBox) //If it's a textbox
                 {
                     textBox.Clear(); //Clear it
-                }
+                } 
                 else //Else
                 {
-                    ClearTextboxesOnThisLevelAndBelow(control.Controls); //Go down a level and repeat
+                    ClearTextBoxesOnThisLevelAndBelow(control.Controls); //Go down a level and repeat
                 }
             }
         }

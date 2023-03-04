@@ -21,7 +21,7 @@
 
         public List<object> values { get; set; } = new List<object>();
 
-        public List<TextBox> textBoxes { get; set; } = new List<TextBox>();
+        public List<Control> valueEntryControls { get; set; } = new List<Control>();
 
         public static List<Parameter> ListOfAll = new List<Parameter>() { };
 

@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
 using System.Data;
 using System.IO.Compression;
-using System.Windows.Forms;
 
 namespace Advanced_Drive_GUI
 {
@@ -187,7 +186,7 @@ namespace Advanced_Drive_GUI
         public static void ReadParamFiles(string txtFilePath)
         {
 
-            MainForm.ClearTextboxesOnThisLevelAndBelow(mainForm.tabControl.Controls); //Clear all textboxes
+            MainForm.ClearTextBoxesOnThisLevelAndBelow(mainForm.tabControl.Controls); //Clear all valueEntryControls
 
             foreach (Parameter parameter in Parameter.ListOfAll) //For each parameter
             {
@@ -223,16 +222,26 @@ namespace Advanced_Drive_GUI
                         string charPair = text.Substring(i, 2); //Get them
                         parameter.values.Add(charPair); //Add each as a value
                         int index = parameter.values.Count - 1; //Get the index of the new added value
-                        parameter.textBoxes[index].Text += charPair.ToString(); //Put the value as a string into the appropriate textbox
+                        parameter.valueEntryControls[index].Text += charPair.ToString(); //Put the value as a string into the appropriate box
                     }
                 }
                 else
                 {
                     parameter.values.Add(actualValue); //Add the actual value to the parameter
                     int index = parameter.values.Count - 1; //Get the index of the added value
-                    parameter.textBoxes[index].Text += actualValue.ToString(); //Put the value as a string into the appropriate textbox
+                    parameter.valueEntryControls[index].Text += actualValue.ToString(); //Put the value as a string into the appropriate box
+                    
                 }
 
+
+            }
+
+            foreach (Parameter parameter in Parameter.ListOfAll) //For each parameter
+            {
+                while (parameter.valueEntryControls.Count >= parameter.values.Count) //If these lists don't have the same length
+                {
+                    parameter.values.Add(""); //Add stuff until they do
+                }
 
             }
         }
@@ -265,10 +274,7 @@ namespace Advanced_Drive_GUI
         /// <returns>The formatted parameter name</returns>
         public static string FormatNames(string? text)
         {
-            if (text == null) //If text doesn't exist
-            {
-                text = string.Empty; //Put it as an empty string
-            }
+            text ??= string.Empty; //Put it as an empty string if it doesn't exist
 
             text = string.Concat(text.Select(c => Char.IsUpper(c) ? " " + c : c.ToString())).TrimStart(' '); //Split up words based on capitalisation
 
