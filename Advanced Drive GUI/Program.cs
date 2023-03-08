@@ -1,6 +1,10 @@
 using System.Data;
 using System.IO.Compression;
 using System.Text.Json;
+using System.Windows.Forms;
+using System.Net.Sockets;
+using System.Management;
+using System.IO.Ports;
 
 namespace Advanced_Drive_GUI
 {
@@ -10,6 +14,7 @@ namespace Advanced_Drive_GUI
         public const string BoolTypeString = "bool";
         public const string FloatTypeString = "float32";
         public const string UIntTypeString = "uint32";
+        public static DriveControlObject? driveControlObject = new();
 
         /// <summary>
         /// The main form of the program
@@ -45,7 +50,6 @@ namespace Advanced_Drive_GUI
         [STAThread]
         static void Main()
         {
-
             ApplicationConfiguration.Initialize(); //Boiler Plate code
             Application.Run(mainForm); //Running the form
         }
@@ -312,7 +316,5 @@ namespace Advanced_Drive_GUI
             }
             return result; //Return result
         }
-
-
     }
 }
