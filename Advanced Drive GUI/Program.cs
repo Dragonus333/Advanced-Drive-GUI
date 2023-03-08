@@ -14,7 +14,7 @@ namespace Advanced_Drive_GUI
         public const string BoolTypeString = "bool";
         public const string FloatTypeString = "float32";
         public const string UIntTypeString = "uint32";
-        public static DriveControlObject? driveControlObject = new();
+        public static DriveControlObject driveControlObject = new();
 
         /// <summary>
         /// The main form of the program
